@@ -1,12 +1,18 @@
 {
   "name": "diff-preview",
   "displayName": "%extension.displayName%",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "%extension.description%",
   "categories": [
     "Other"
   ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JUNERDD/vscode-plugins.git",
+    "directory": "extensions/diff-preview"
+  },
   "publisher": "vscode-plugins",
   "main": "./dist/extension.js",
   "scripts": {
@@ -16,7 +22,7 @@
     "format": "oxfmt --write \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
     "format:check": "oxfmt --check \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
     "lint": "oxlint src test rolldown.config.mjs vitest.config.ts",
-    "package:vsix": "pnpm run build && pnpm dlx @vscode/vsce package --no-dependencies --out diff-preview-0.0.0.vsix",
+    "package:vsix": "pnpm run build && pnpm dlx @vscode/vsce package --no-dependencies --out diff-preview-0.0.1.vsix",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -p tsconfig.json --noEmit"
