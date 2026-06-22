@@ -1,0 +1,91 @@
+const cursorCommitTypes = [
+  "feat",
+  "fix",
+  "style",
+  "format",
+  "docs",
+  "perf",
+  "init",
+  "test",
+  "refactor",
+  "build",
+  "patch",
+  "file",
+  "publish",
+  "tag",
+  "config",
+  "git",
+];
+
+const cursorGitmojis = [
+  "✨",
+  "🔨",
+  "💄",
+  "🥚",
+  "📝",
+  "👌",
+  "🎉",
+  "✅",
+  "🎨",
+  "🛠️",
+  "🚑",
+  "📦",
+  "🚀",
+  "📌",
+  "🔧",
+  "🙈",
+].join("|");
+
+module.exports = {
+  extends: ["@commitlint/config-conventional"],
+  parserPreset: {
+    parserOpts: {
+      headerPattern: new RegExp(
+        `^(?:(?:${cursorGitmojis})\\s*)?([a-z]+)(?:\\(([^()\\r\\n]+)\\))?: (.+)$`,
+        "u",
+      ),
+      headerCorrespondence: ["type", "scope", "subject"],
+    },
+  },
+  rules: {
+    "body-leading-blank": [2, "always"],
+    "footer-leading-blank": [2, "always"],
+    "header-max-length": [2, "always", 100],
+    "subject-empty": [2, "never"],
+    "type-case": [2, "always", "lower-case"],
+    "type-empty": [2, "never"],
+    "type-enum": [2, "always", cursorCommitTypes],
+  },
+  prompt: {
+    settings: {},
+    messages: {
+      emptyWarning: "Commit message must match <type>(scope): subject.",
+      skip: ":skip",
+      max: "upper %d chars",
+      min: "%d chars at least",
+    },
+    questions: {
+      type: {
+        description: "Select the type of change",
+        enum: {
+          feat: { description: "引入新功能", title: "Features", emoji: "✨" },
+          fix: { description: "修复 bug", title: "Bug Fixes", emoji: "🔨" },
+          style: { description: "更新 UI 样式文件", title: "Styles", emoji: "💄" },
+          format: { description: "格式化代码", title: "Format", emoji: "🥚" },
+          docs: { description: "添加 / 更新文档", title: "Docs", emoji: "📝" },
+          perf: { description: "提高性能 / 优化", title: "Performance", emoji: "👌" },
+          init: { description: "初次提交 / 初始化项目", title: "Init", emoji: "🎉" },
+          test: { description: "增加测试代码", title: "Tests", emoji: "✅" },
+          refactor: { description: "改进代码结构 / 代码格式", title: "Refactor", emoji: "🎨" },
+          build: { description: "更新代码依赖", title: "Build", emoji: "🛠️" },
+          patch: { description: "添加重要补丁", title: "Patch", emoji: "🚑" },
+          file: { description: "添加新文件", title: "Files", emoji: "📦" },
+          publish: { description: "发布新版本", title: "Publish", emoji: "🚀" },
+          tag: { description: "发布新标签", title: "Tags", emoji: "📌" },
+          config: { description: "修改配置文件", title: "Config", emoji: "🔧" },
+          git: { description: "添加或修改 .gitignore 文件", title: "Git", emoji: "🙈" },
+        },
+      },
+    },
+  },
+};

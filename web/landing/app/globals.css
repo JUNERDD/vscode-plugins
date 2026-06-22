@@ -1,0 +1,57 @@
+:root {
+  color-scheme: light;
+  --background: #f7f8fa;
+  --foreground: #15171a;
+  --muted: #59616b;
+  --panel: #ffffff;
+  --panel-strong: #202523;
+  --line: #d7dde3;
+  --accent: #2f6fed;
+  --accent-strong: #174fc2;
+  --signal: #d74b2a;
+  --gold: #c89b16;
+  --ink-soft: #303741;
+  --shadow: 0 20px 70px rgb(28 39 55 / 14%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background:
+    linear-gradient(90deg, rgb(22 22 22 / 4%) 1px, transparent 1px),
+    linear-gradient(180deg, rgb(22 22 22 / 4%) 1px, transparent 1px),
+    var(--background);
+  background-size: 44px 44px;
+  color: var(--foreground);
+  font-family:
+    Avenir Next,
+    Avenir,
+    Segoe UI,
+    system-ui,
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--foreground);
+}

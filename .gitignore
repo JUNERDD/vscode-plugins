@@ -1,17 +1,21 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 .pnp
 .pnp.js
 
 # Build output
+.next/
 dist/
 out/
 build/
 *.tsbuildinfo
+.vercel/
 
 # VS Code extension
 *.vsix
 .vscode-test/
+.vscode-test-web/
 
 # Logs
 logs/
@@ -29,12 +33,17 @@ pnpm-debug.log*
 # Test & coverage
 coverage/
 .nyc_output/
+.vitest/
+test-results/
+playwright-report/
 
 # Cache
 .cache/
 .eslintcache
+.oxlintcache
 .parcel-cache/
 .turbo/
+.vite/
 
 # OS files
 .DS_Store

@@ -1,0 +1,35 @@
+{
+  "name": "vscode-plugins",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "dev": "turbo run dev --parallel",
+    "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx,json,jsonc,mjs,cjs}\" --no-error-on-unmatched-pattern",
+    "format:check": "oxfmt --check \"**/*.{js,jsx,ts,tsx,json,jsonc,mjs,cjs}\" --no-error-on-unmatched-pattern",
+    "lint": "oxlint . --deny-warnings --import-plugin --react-plugin --jsx-a11y-plugin --nextjs-plugin --node-plugin --promise-plugin",
+    "lint:fix": "oxlint . --fix --import-plugin --react-plugin --jsx-a11y-plugin --nextjs-plugin --node-plugin --promise-plugin",
+    "prepare": "git config core.hooksPath .githooks",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.0.2",
+    "@commitlint/config-conventional": "21.0.2",
+    "@types/node": "26.0.0",
+    "@vitest/coverage-v8": "4.1.9",
+    "oxfmt": "0.55.0",
+    "oxlint": "1.70.0",
+    "rolldown": "1.1.2",
+    "turbo": "2.9.18",
+    "typescript": "6.0.3",
+    "vitest": "4.1.9"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=11.0.0"
+  },
+  "packageManager": "pnpm@11.3.0"
+}
