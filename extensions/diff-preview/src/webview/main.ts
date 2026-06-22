@@ -5,6 +5,7 @@ import type {
   DiffStyle,
   OverflowMode,
 } from "../protocol";
+import type { DiffPreviewWebviewStrings } from "../localize";
 import type { DiffPreviewRuntime, DiffStats } from "./renderer";
 
 declare const acquireVsCodeApi: () => {
@@ -19,6 +20,7 @@ type LocalSettingOverrides = Partial<
 >;
 
 const vscode = acquireVsCodeApi();
+const strings = readWebviewStrings();
 const toolbar = requiredElement<HTMLElement>("toolbar");
 const statsNode = requiredElement<HTMLElement>("stats");
 const notice = requiredElement<HTMLElement>("notice");
@@ -62,14 +64,17 @@ async function renderLatest(): Promise<void> {
   if (latestMessage.tooLarge) {
     clearRenderer();
     showNotice(
-      `${latestMessage.fileName} is ${formatBytes(latestMessage.sizeBytes)}, above diffPreview.view.maxFileSizeBytes.`,
+      formatTemplate(strings.tooLarge, {
+        fileName: latestMessage.fileName,
+        size: formatBytes(latestMessage.sizeBytes),
+      }),
       "banner",
     );
     showFallback("");
     return;
   }
 
-  showNotice("Loading diff renderer...");
+  showNotice(strings.loadingRenderer);
   hideFallback();
   await nextFrame();
 
@@ -78,7 +83,7 @@ async function renderLatest(): Promise<void> {
     runtime = await getRenderer();
   } catch (error) {
     clearRenderer();
-    showNotice(error instanceof Error ? error.message : "Unable to load diff renderer.", "banner");
+    showNotice(error instanceof Error ? error.message : strings.unableLoadRenderer, "banner");
     showFallback(latestMessage.text);
     return;
   }
@@ -99,7 +104,7 @@ async function renderLatest(): Promise<void> {
     hideFallback();
   } catch (error) {
     clearRenderer();
-    showNotice(error instanceof Error ? error.message : "Unable to parse diff file.", "banner");
+    showNotice(error instanceof Error ? error.message : strings.unableParseDiff, "banner");
     showFallback(latestMessage.text);
   }
 }
@@ -170,7 +175,13 @@ function syncToolbar(settings: DiffPreviewSettings): void {
 }
 
 function updateStats(stats: DiffStats, sizeBytes: number): void {
-  statsNode.textContent = `${stats.files} files  +${stats.additions}  -${stats.deletions}  ${stats.hunks} hunks  ${formatBytes(sizeBytes)}`;
+  statsNode.textContent = formatTemplate(strings.stats, {
+    additions: String(stats.additions),
+    deletions: String(stats.deletions),
+    files: String(stats.files),
+    hunks: String(stats.hunks),
+    size: formatBytes(sizeBytes),
+  });
 }
 
 function resolveSettingsFromLatest(): DiffPreviewSettings {
@@ -254,6 +265,23 @@ function requiredElement<TElement extends HTMLElement>(id: string): TElement {
   }
 
   return element as TElement;
+}
+
+function readWebviewStrings(): DiffPreviewWebviewStrings {
+  const template = requiredElement<HTMLTemplateElement>("l10n-data");
+  const raw = template.content.textContent;
+
+  if (raw == null || raw.length === 0) {
+    throw new Error("Missing webview localization data.");
+  }
+
+  return JSON.parse(raw) as DiffPreviewWebviewStrings;
+}
+
+function formatTemplate(template: string, values: Record<string, string>): string {
+  return template.replaceAll(/\{(?<key>[A-Za-z0-9_]+)\}/g, (match, key: string) => {
+    return values[key] ?? match;
+  });
 }
 
 function formatBytes(bytes: number): string {

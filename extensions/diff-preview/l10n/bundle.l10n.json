@@ -1,0 +1,20 @@
+{
+  "Diff Preview": "Diff Preview",
+  "Diff files": "Diff files",
+  "Files: {files}  +{additions}  -{deletions}  Hunks: {hunks}  {size}": "Files: {files}  +{additions}  -{deletions}  Hunks: {hunks}  {size}",
+  "Header": "Header",
+  "Layout": "Layout",
+  "Loading Diff Preview...": "Loading Diff Preview...",
+  "Loading diff renderer...": "Loading diff renderer...",
+  "Open Text": "Open Text",
+  "Split": "Split",
+  "Toggle file headers": "Toggle file headers",
+  "Toggle line numbers": "Toggle line numbers",
+  "Toggle line wrapping": "Toggle line wrapping",
+  "Unable to load diff renderer.": "Unable to load diff renderer.",
+  "Unable to parse diff file.": "Unable to parse diff file.",
+  "Unable to read {uri}\n\n{message}": "Unable to read {uri}\n\n{message}",
+  "Unified": "Unified",
+  "Wrap": "Wrap",
+  "{fileName} is {size}, above diffPreview.view.maxFileSizeBytes.": "{fileName} is {size}, above diffPreview.view.maxFileSizeBytes."
+}

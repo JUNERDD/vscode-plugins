@@ -2,6 +2,7 @@ import * as path from "node:path";
 import * as vscode from "vscode";
 
 import { readPreviewSettings } from "./config";
+import { getDiffFileFilterLabel, getReadFailureText, getWebviewStrings } from "./localize";
 import {
   CONFIG_SECTION,
   OPEN_PREVIEW_COMMAND,
@@ -51,7 +52,11 @@ export class DiffPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       enableScripts: true,
       localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, "dist")],
     };
-    webviewPanel.webview.html = buildWebviewHtml(webviewPanel.webview, this.extensionUri);
+    webviewPanel.webview.html = buildWebviewHtml(
+      webviewPanel.webview,
+      this.extensionUri,
+      getWebviewStrings(),
+    );
 
     const disposables: vscode.Disposable[] = [];
     let postRevision = 0;
@@ -134,7 +139,7 @@ async function pickDiffFile(): Promise<vscode.Uri | undefined> {
     canSelectFolders: false,
     canSelectMany: false,
     filters: {
-      "Diff files": ["diff", "patch"],
+      [getDiffFileFilterLabel()]: ["diff", "patch"],
     },
   });
 
@@ -188,7 +193,7 @@ function createReadFailureMessage(uri: vscode.Uri, message: string): DiffPreview
     type: "update",
     documentUri: uri.toString(),
     fileName: path.basename(uri.fsPath) || uri.toString(),
-    text: `Unable to read ${uri.toString()}\n\n${message}`,
+    text: getReadFailureText(uri, message),
     version: Date.now(),
     sizeBytes: 0,
     tooLarge: false,

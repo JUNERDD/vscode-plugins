@@ -1,13 +1,19 @@
 import * as vscode from "vscode";
 
-export function buildWebviewHtml(webview: vscode.Webview, extensionUri: vscode.Uri): string {
+import type { DiffPreviewWebviewStrings } from "./localize";
+
+export function buildWebviewHtml(
+  webview: vscode.Webview,
+  extensionUri: vscode.Uri,
+  strings: DiffPreviewWebviewStrings,
+): string {
   const scriptUri = webview.asWebviewUri(
     vscode.Uri.joinPath(extensionUri, "dist", "webview", "main.js"),
   );
   const nonce = createNonce();
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${escapeAttribute(vscode.env.language || "en")}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +22,7 @@ export function buildWebviewHtml(webview: vscode.Webview, extensionUri: vscode.U
   } data:; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${
     webview.cspSource
   } 'nonce-${nonce}';">
-  <title>Diff Preview</title>
+  <title>${escapeHtml(strings.title)}</title>
   <style>
 ${CRITICAL_CSS}
   </style>
@@ -26,27 +32,38 @@ ${CRITICAL_CSS}
     <header id="toolbar" class="toolbar" hidden>
       <div class="toolbar-group">
         <label class="control">
-          <span>Layout</span>
-          <select id="layout-select" aria-label="Layout">
-            <option value="split">Split</option>
-            <option value="unified">Unified</option>
+          <span>${escapeHtml(strings.layoutLabel)}</span>
+          <select id="layout-select" aria-label="${escapeAttribute(strings.layoutLabel)}">
+            <option value="split">${escapeHtml(strings.splitLayout)}</option>
+            <option value="unified">${escapeHtml(strings.unifiedLayout)}</option>
           </select>
         </label>
-        <button id="overflow-toggle" class="icon-button" type="button" aria-pressed="false" title="Toggle line wrapping">Wrap</button>
-        <button id="line-number-toggle" class="icon-button" type="button" aria-pressed="false" title="Toggle line numbers">#</button>
-        <button id="file-header-toggle" class="icon-button" type="button" aria-pressed="false" title="Toggle file headers">Header</button>
+        <button id="overflow-toggle" class="icon-button" type="button" aria-pressed="false" title="${escapeAttribute(
+          strings.toggleLineWrappingTitle,
+        )}">${escapeHtml(strings.wrapButton)}</button>
+        <button id="line-number-toggle" class="icon-button" type="button" aria-pressed="false" title="${escapeAttribute(
+          strings.toggleLineNumbersTitle,
+        )}">${escapeHtml(strings.lineNumberButton)}</button>
+        <button id="file-header-toggle" class="icon-button" type="button" aria-pressed="false" title="${escapeAttribute(
+          strings.toggleFileHeadersTitle,
+        )}">${escapeHtml(strings.fileHeaderButton)}</button>
       </div>
       <div id="stats" class="stats" hidden></div>
       <div class="toolbar-group">
-        <button id="open-text" class="text-button" type="button">Open Text</button>
+        <button id="open-text" class="text-button" type="button">${escapeHtml(
+          strings.openTextButton,
+        )}</button>
       </div>
     </header>
     <main id="surface">
-      <div id="notice" class="notice notice-cover" role="status" aria-live="polite">Loading Diff Preview...</div>
+      <div id="notice" class="notice notice-cover" role="status" aria-live="polite">${escapeHtml(
+        strings.loadingPreview,
+      )}</div>
       <div id="viewer" class="viewer"></div>
       <pre id="fallback" class="fallback" hidden></pre>
     </main>
   </div>
+  <template id="l10n-data">${escapeHtml(JSON.stringify(strings))}</template>
   <script nonce="${nonce}" type="module" src="${scriptUri}"></script>
 </body>
 </html>`;
@@ -61,6 +78,19 @@ function createNonce(): string {
   }
 
   return nonce;
+}
+
+function escapeAttribute(value: string): string {
+  return escapeHtml(value);
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 const CRITICAL_CSS = `
