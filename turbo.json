@@ -13,6 +13,10 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
+    "package:vsix": {
+      "dependsOn": ["^build"],
+      "outputs": ["*.vsix"]
+    },
     "test": {
       "dependsOn": ["^build"],
       "outputs": []

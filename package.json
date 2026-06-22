@@ -10,6 +10,7 @@
     "format:check": "oxfmt --check \"**/*.{js,jsx,ts,tsx,json,jsonc,mjs,cjs}\" --no-error-on-unmatched-pattern",
     "lint": "oxlint . --deny-warnings --import-plugin --react-plugin --jsx-a11y-plugin --nextjs-plugin --node-plugin --promise-plugin",
     "lint:fix": "oxlint . --fix --import-plugin --react-plugin --jsx-a11y-plugin --nextjs-plugin --node-plugin --promise-plugin",
+    "package:vsix": "turbo run package:vsix",
     "prepare": "git config core.hooksPath .githooks",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
