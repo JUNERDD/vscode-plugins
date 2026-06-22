@@ -7,6 +7,7 @@ This repository is a Turborepo workspace for VS Code extensions, shared TypeScri
 - `extensions/*` contains VS Code extension packages. Each extension owns its manifest, activation code, tests, and Rolldown build config.
 - `packages/*` contains shared code. Only put code here when it is intentionally reusable across extensions or web apps.
 - `web/*` contains Next.js apps. The current landing app uses the App Router and React 19.
+- Keep tests in each workspace's top-level `test/` directory, such as `extensions/foo/test/*.test.ts`. Do not colocate `.test.ts` or `.spec.ts` files under `src/`; configure Vitest, typecheck, lint, format, and package ignore rules to cover or exclude `test/` explicitly as appropriate.
 - Use `pnpm` from the repository root. Do not add npm/yarn lockfiles.
 - Use Oxc for code quality: `oxlint` for linting and `oxfmt` for formatting. Do not introduce ESLint, Prettier, or parallel style systems unless the user explicitly asks.
 - Use Rolldown for extension and package bundles.
@@ -126,4 +127,3 @@ Before adding a dependency:
 - Update tests when changing behavior, public contracts, package exports, command registrations, or React component composition.
 - After changing generated-output patterns or dependency build scripts, verify `.gitignore` still ignores build output, caches, `node_modules`, `.next`, `dist`, coverage, and temporary files.
 - Do not stage, commit, push, tag, or open PRs unless the user explicitly asks.
-

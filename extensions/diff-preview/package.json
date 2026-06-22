@@ -1,0 +1,285 @@
+{
+  "name": "diff-preview",
+  "displayName": "Diff Preview",
+  "version": "0.0.0",
+  "private": true,
+  "description": "VS Code custom editor for previewing .diff and .patch files with Pierre Diffs.",
+  "categories": [
+    "Other"
+  ],
+  "publisher": "vscode-plugins",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "pnpm run clean && rolldown -c",
+    "clean": "rm -rf dist",
+    "dev": "rolldown -c --watch",
+    "format": "oxfmt --write \"src/**/*.ts\" \"test/**/*.ts\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
+    "format:check": "oxfmt --check \"src/**/*.ts\" \"test/**/*.ts\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
+    "lint": "oxlint src test rolldown.config.mjs vitest.config.ts",
+    "package:vsix": "pnpm run build && pnpm dlx @vscode/vsce package --no-dependencies --out diff-preview-0.0.0.vsix",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@pierre/diffs": "1.2.11",
+    "@types/vscode": "1.105.0",
+    "@vitest/coverage-v8": "4.1.9",
+    "oxfmt": "0.55.0",
+    "oxlint": "1.70.0",
+    "rolldown": "1.1.2",
+    "typescript": "6.0.3",
+    "vitest": "4.1.9"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-plugins-diff-preview.openPreview",
+        "title": "Diff Preview: Open Preview"
+      },
+      {
+        "command": "vscode-plugins-diff-preview.openPreviewToSide",
+        "title": "Diff Preview: Open Preview to Side"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "vscode-plugins-diff-preview.preview",
+        "displayName": "Diff Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.diff"
+          },
+          {
+            "filenamePattern": "*.patch"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "vscode-plugins-diff-preview.openPreviewToSide",
+          "when": "resourceExtname == .diff || resourceExtname == .patch",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Diff Preview",
+      "properties": {
+        "diffPreview.view.defaultStyle": {
+          "type": "string",
+          "enum": [
+            "split",
+            "unified"
+          ],
+          "default": "split",
+          "description": "Default diff layout used by the preview."
+        },
+        "diffPreview.view.overflow": {
+          "type": "string",
+          "enum": [
+            "scroll",
+            "wrap"
+          ],
+          "default": "scroll",
+          "description": "Default long-line handling in rendered diffs."
+        },
+        "diffPreview.view.themeType": {
+          "type": "string",
+          "enum": [
+            "system",
+            "light",
+            "dark"
+          ],
+          "default": "system",
+          "description": "Theme variant passed to the diff renderer."
+        },
+        "diffPreview.view.darkTheme": {
+          "type": "string",
+          "default": "pierre-dark",
+          "description": "Shiki theme name for dark preview rendering."
+        },
+        "diffPreview.view.lightTheme": {
+          "type": "string",
+          "default": "pierre-light",
+          "description": "Shiki theme name for light preview rendering."
+        },
+        "diffPreview.view.preferredHighlighter": {
+          "type": "string",
+          "enum": [
+            "shiki-js",
+            "shiki-wasm"
+          ],
+          "default": "shiki-js",
+          "description": "Highlighter engine used by @pierre/diffs."
+        },
+        "diffPreview.view.diffIndicators": {
+          "type": "string",
+          "enum": [
+            "classic",
+            "bars",
+            "none"
+          ],
+          "default": "classic",
+          "description": "Visual indicators for added and deleted lines."
+        },
+        "diffPreview.view.hunkSeparators": {
+          "type": "string",
+          "enum": [
+            "simple",
+            "metadata",
+            "line-info",
+            "line-info-basic"
+          ],
+          "default": "line-info",
+          "description": "Hunk separator style."
+        },
+        "diffPreview.view.lineDiffType": {
+          "type": "string",
+          "enum": [
+            "word-alt",
+            "word",
+            "char",
+            "none"
+          ],
+          "default": "word",
+          "description": "Inline change highlighting granularity."
+        },
+        "diffPreview.view.lineHoverHighlight": {
+          "type": "string",
+          "enum": [
+            "disabled",
+            "both",
+            "number",
+            "line"
+          ],
+          "default": "line",
+          "description": "Line hover behavior."
+        },
+        "diffPreview.view.disableLineNumbers": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide line numbers in preview output."
+        },
+        "diffPreview.view.disableFileHeader": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide per-file headers."
+        },
+        "diffPreview.view.disableBackground": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable added/deleted line backgrounds."
+        },
+        "diffPreview.view.expandUnchanged": {
+          "type": "boolean",
+          "default": false,
+          "description": "Render unchanged collapsed regions expanded when possible."
+        },
+        "diffPreview.view.enableLineSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable pointer-based line range selection in the preview."
+        },
+        "diffPreview.view.enableGutterUtility": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the renderer gutter utility hook."
+        },
+        "diffPreview.view.useTokenTransformer": {
+          "type": "boolean",
+          "default": false,
+          "description": "Force token wrapper metadata for token-aware styling."
+        },
+        "diffPreview.view.enableTokenInteractionsOnWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include whitespace-only tokens in token interactions."
+        },
+        "diffPreview.view.disableVirtualizationBuffers": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable virtualization buffers in the renderer."
+        },
+        "diffPreview.view.stickyHeaders": {
+          "type": "boolean",
+          "default": true,
+          "description": "Keep file headers sticky while scrolling large previews."
+        },
+        "diffPreview.view.pointerEventsOnScroll": {
+          "type": "boolean",
+          "default": false,
+          "description": "Keep pointer events enabled during scroll."
+        },
+        "diffPreview.view.showToolbar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the preview toolbar."
+        },
+        "diffPreview.view.showStats": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show parsed diff statistics in the preview toolbar."
+        },
+        "diffPreview.view.collapsedContextThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10000,
+          "default": 1,
+          "description": "Minimum unchanged context threshold before a region is collapsible."
+        },
+        "diffPreview.view.expansionLineCount": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 20,
+          "description": "Number of lines expanded when opening collapsed hunks."
+        },
+        "diffPreview.view.maxLineDiffLength": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 5000,
+          "description": "Maximum line length for inline change highlighting."
+        },
+        "diffPreview.view.tokenizeMaxLineLength": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 1000,
+          "description": "Skip syntax highlighting for individual lines above this length."
+        },
+        "diffPreview.view.tokenizeMaxLength": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10000000,
+          "default": 100000,
+          "description": "Skip syntax highlighting for files above this total tokenization length."
+        },
+        "diffPreview.view.maxFileSizeBytes": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 104857600,
+          "default": 10485760,
+          "description": "Maximum document size sent to the Webview preview."
+        },
+        "diffPreview.view.customCss": {
+          "type": "string",
+          "default": "",
+          "description": "Extra CSS passed to @pierre/diffs unsafeCSS for advanced styling."
+        }
+      }
+    }
+  },
+  "activationEvents": [
+    "onCommand:vscode-plugins-diff-preview.openPreview",
+    "onCommand:vscode-plugins-diff-preview.openPreviewToSide",
+    "onCustomEditor:vscode-plugins-diff-preview.preview"
+  ],
+  "engines": {
+    "vscode": "^1.105.0"
+  }
+}
