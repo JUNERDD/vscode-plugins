@@ -22,7 +22,7 @@
     "format": "oxfmt --write \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
     "format:check": "oxfmt --check \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
     "lint": "oxlint src test rolldown.config.mjs vitest.config.ts",
-    "package:vsix": "pnpm run build && pnpm dlx @vscode/vsce package --no-dependencies --out diff-preview-0.0.1.vsix",
+    "package:vsix": "pnpm run build && pnpm exec vsce package --no-dependencies",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -31,6 +31,7 @@
     "@pierre/diffs": "1.2.11",
     "@types/vscode": "1.105.0",
     "@vitest/coverage-v8": "4.1.9",
+    "@vscode/vsce": "3.9.2",
     "oxfmt": "0.55.0",
     "oxlint": "1.70.0",
     "rolldown": "1.1.2",

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "turbo run dev --parallel",
     "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx,json,jsonc,mjs,cjs}\" --no-error-on-unmatched-pattern",
@@ -12,6 +13,9 @@
     "lint:fix": "oxlint . --fix --import-plugin --react-plugin --jsx-a11y-plugin --nextjs-plugin --node-plugin --promise-plugin",
     "package:vsix": "turbo run package:vsix",
     "prepare": "git config core.hooksPath .githooks",
+    "release:diff-preview:major": "pnpm check && pnpm --dir extensions/diff-preview version major --tag-version-prefix=diff-preview-v -m \"chore(diff-preview): release v%s\"",
+    "release:diff-preview:minor": "pnpm check && pnpm --dir extensions/diff-preview version minor --tag-version-prefix=diff-preview-v -m \"chore(diff-preview): release v%s\"",
+    "release:diff-preview:patch": "pnpm check && pnpm --dir extensions/diff-preview version patch --tag-version-prefix=diff-preview-v -m \"chore(diff-preview): release v%s\"",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "typecheck": "turbo run typecheck"
