@@ -1,12 +1,11 @@
 # Agent Instructions
 
-This repository is a Turborepo workspace for VS Code extensions, shared TypeScript packages, and Next.js web surfaces. Follow these rules before changing code.
+This repository is a Turborepo workspace for VS Code extensions and shared TypeScript packages. Follow these rules before changing code.
 
 ## Repository Shape
 
 - `extensions/*` contains VS Code extension packages. Each extension owns its manifest, activation code, tests, and Rolldown build config.
-- `packages/*` contains shared code. Only put code here when it is intentionally reusable across extensions or web apps.
-- `web/*` contains Next.js apps. The current landing app uses the App Router and React 19.
+- `packages/*` contains shared code. Only put code here when it is intentionally reusable across extensions.
 - Keep tests in each workspace's top-level `test/` directory, such as `extensions/foo/test/*.test.ts`. Do not colocate `.test.ts` or `.spec.ts` files under `src/`; configure Vitest, typecheck, lint, format, and package ignore rules to cover or exclude `test/` explicitly as appropriate.
 - Use `pnpm` from the repository root. Do not add npm/yarn lockfiles.
 - Use Oxc for code quality: `oxlint` for linting and `oxfmt` for formatting. Do not introduce ESLint, Prettier, or parallel style systems unless the user explicitly asks.
@@ -29,7 +28,6 @@ For local development:
 
 ```sh
 pnpm dev
-pnpm --dir web/landing dev --hostname 127.0.0.1 --port 3000
 ```
 
 ## Reuse Before Building
@@ -37,7 +35,7 @@ pnpm --dir web/landing dev --hostname 127.0.0.1 --port 3000
 Before adding a new helper, package, workflow, component, or dependency:
 
 1. Search existing code, docs, package manifests, tests, and README files with domain terms and synonyms.
-2. Check whether the capability belongs in `extensions/*`, `packages/*`, or `web/*`.
+2. Check whether the capability belongs in `extensions/*` or `packages/*`.
 3. Classify any apparent duplicate by behavior, not just similar code shape: exact copy, near clone, same business rule, repeated workflow, shadow fork, or justified divergence.
 4. Reuse only when the existing asset has a clear fit, owner, tests, examples or obvious usage, and lower lifecycle cost than rebuilding.
 5. Keep implementations separate when domains are likely to evolve differently or the abstraction would be less clear than the duplication.
@@ -75,41 +73,6 @@ When documenting a function, include `@param` entries only when they explain cal
 - Test activation, command registration, and reusable logic with Vitest. Mock `vscode` APIs in unit tests rather than invoking the editor runtime.
 - Treat extension commands, activation events, contribution points, and package manifest fields as public contracts. Changes require tests or a clear manual verification note.
 
-## Next.js And React
-
-Default to Server Components in `web/*`. Add `"use client"` only for interactivity, browser APIs, or stateful UI that cannot stay server-side.
-
-Performance priorities:
-
-- Eliminate async waterfalls. Start independent work early and use `Promise.all()` for independent operations.
-- Check cheap synchronous conditions before awaiting expensive flags, network calls, or database work.
-- Use Suspense boundaries when they let static layout render while slower content loads.
-- Keep RSC-to-client props minimal. Pass only fields the client actually uses.
-- Avoid module-level mutable request state in server code.
-- Hoist static I/O to module scope only for immutable assets or config.
-- Defer analytics, logging, and other non-critical client work until after hydration or idle time.
-- Use `next/dynamic` for heavy client-only components.
-- Prefer statically analyzable imports and file paths. Avoid dynamic import paths that make bundlers include broad file sets.
-
-Rendering and client behavior:
-
-- Derive state during render when possible instead of syncing derived state through effects.
-- Put user-triggered side effects in event handlers rather than modeling them as state plus effect.
-- Use functional state updates when next state depends on previous state.
-- Use lazy `useState` initializers for expensive initial values.
-- Do not define React components inside other components.
-- Do not wrap simple primitive expressions in `useMemo`.
-- Use explicit ternaries for conditional rendering when a value might be `0`, `NaN`, or another renderable falsy value.
-- Use passive listeners for scroll and touch events unless the handler must call `preventDefault()`.
-
-Composition priorities:
-
-- Avoid boolean prop proliferation. Prefer explicit variants and composition over `isEditing`, `isThread`, `showX` mode matrices.
-- Use compound components for complex reusable UI with shared context.
-- Keep providers responsible for state management. UI components should consume a small `state`, `actions`, and `meta` interface, not know how state is stored.
-- Prefer composing `children` for structure. Use render props only when the parent must pass data back into the child render.
-- In React 19 code, prefer `ref` as a normal prop and `use()` for context where appropriate.
-
 ## Dependency Policy
 
 Before adding a dependency:
@@ -124,6 +87,6 @@ Before adding a dependency:
 
 - Preserve unrelated user changes. Do not revert files you did not intentionally edit.
 - Keep edits scoped to the relevant workspace and shared contracts.
-- Update tests when changing behavior, public contracts, package exports, command registrations, or React component composition.
+- Update tests when changing behavior, public contracts, package exports, or command registrations.
 - After changing generated-output patterns or dependency build scripts, verify `.gitignore` still ignores build output, caches, `node_modules`, `.next`, `dist`, coverage, and temporary files.
 - Do not stage, commit, push, tag, or open PRs unless the user explicitly asks.

@@ -1,0 +1,13 @@
+{
+  "command.openCommit.title": "Commit Tree: Open Commit",
+  "command.openFromHistory.title": "Open Commit in File Tree",
+  "configuration.defaultStyle.description": "Default layout for commit diffs.",
+  "configuration.flattenEmptyDirectories.description": "Collapse chains of directories that contain a single child.",
+  "configuration.maxPatchSizeBytes.description": "Maximum Git patch size loaded into the commit Webview.",
+  "configuration.overflow.description": "Default long-line handling in commit diffs.",
+  "configuration.stickyHeaders.description": "Keep the current file header visible while scrolling.",
+  "configuration.title": "Commit Tree",
+  "configuration.treeWidth.description": "Initial width of the file tree in pixels.",
+  "extension.description": "Browse a Git commit as a Pierre-powered file tree and multi-file diff.",
+  "extension.displayName": "Commit Tree"
+}

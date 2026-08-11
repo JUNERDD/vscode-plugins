@@ -1,0 +1,13 @@
+{
+  "command.openCommit.title": "Commit Tree：打开提交",
+  "command.openFromHistory.title": "用文件树打开提交",
+  "configuration.defaultStyle.description": "提交 diff 默认使用的布局。",
+  "configuration.flattenEmptyDirectories.description": "折叠仅包含一个子项的连续目录。",
+  "configuration.maxPatchSizeBytes.description": "加载到提交 Webview 的 Git patch 最大大小。",
+  "configuration.overflow.description": "提交 diff 默认的长行处理方式。",
+  "configuration.stickyHeaders.description": "滚动时保持当前文件标题可见。",
+  "configuration.title": "Commit Tree",
+  "configuration.treeWidth.description": "文件树的初始宽度（像素）。",
+  "extension.description": "以 Pierre 驱动的文件树和多文件 diff 浏览 Git 提交。",
+  "extension.displayName": "Commit Tree"
+}

@@ -198,12 +198,27 @@ const CRITICAL_CSS = `
 
     #surface {
       min-height: 0;
-      overflow: auto;
+      overflow: hidden;
       position: relative;
     }
 
+    #surface.fallback-visible {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    #surface.fallback-visible .viewer {
+      display: none;
+    }
+
+    #surface.fallback-visible .notice-banner {
+      position: static;
+    }
+
     .viewer {
-      min-height: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: auto;
     }
 
     .notice {
@@ -243,8 +258,11 @@ const CRITICAL_CSS = `
       color: var(--vscode-editor-foreground);
       font-family: var(--vscode-editor-font-family);
       font-size: var(--vscode-editor-font-size);
+      height: 100%;
       line-height: 1.5;
       margin: 0;
+      min-height: 0;
+      overflow: auto;
       padding: 12px;
       white-space: pre-wrap;
     }
