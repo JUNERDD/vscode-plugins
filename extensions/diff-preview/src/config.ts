@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { DEFAULT_DIFF_VIEWER_SETTINGS } from "@vscode-plugins/pierre-diff-viewer";
 
 import {
   CONFIG_SECTION,
@@ -22,58 +23,105 @@ export function readPreviewSettings(): DiffPreviewSettings {
 }
 
 export function settingsFromReader(reader: ConfigurationReader): DiffPreviewSettings {
+  const defaults = DEFAULT_DIFF_VIEWER_SETTINGS;
+
   return {
-    defaultStyle: enumValue(reader, "view.defaultStyle", DIFF_STYLES, "split"),
-    overflow: enumValue(reader, "view.overflow", OVERFLOW_MODES, "scroll"),
-    themeType: enumValue(reader, "view.themeType", THEME_TYPES, "system"),
-    darkTheme: nonEmptyString(reader.get("view.darkTheme", "pierre-dark"), "pierre-dark"),
-    lightTheme: nonEmptyString(reader.get("view.lightTheme", "pierre-light"), "pierre-light"),
+    defaultStyle: enumValue(reader, "view.defaultStyle", DIFF_STYLES, defaults.defaultStyle),
+    overflow: enumValue(reader, "view.overflow", OVERFLOW_MODES, defaults.overflow),
+    themeType: enumValue(reader, "view.themeType", THEME_TYPES, defaults.themeType),
+    darkTheme: nonEmptyString(reader.get("view.darkTheme", defaults.darkTheme), defaults.darkTheme),
+    lightTheme: nonEmptyString(
+      reader.get("view.lightTheme", defaults.lightTheme),
+      defaults.lightTheme,
+    ),
     preferredHighlighter: enumValue(
       reader,
       "view.preferredHighlighter",
       HIGHLIGHTER_TYPES,
-      "shiki-js",
+      defaults.preferredHighlighter,
     ),
-    diffIndicators: enumValue(reader, "view.diffIndicators", DIFF_INDICATORS, "classic"),
-    hunkSeparators: enumValue(reader, "view.hunkSeparators", HUNK_SEPARATORS, "line-info"),
-    lineDiffType: enumValue(reader, "view.lineDiffType", LINE_DIFF_TYPES, "word"),
-    lineHoverHighlight: enumValue(reader, "view.lineHoverHighlight", LINE_HOVER_HIGHLIGHTS, "line"),
-    disableLineNumbers: booleanValue(reader.get("view.disableLineNumbers", false)),
-    disableFileHeader: booleanValue(reader.get("view.disableFileHeader", false)),
-    disableBackground: booleanValue(reader.get("view.disableBackground", false)),
-    expandUnchanged: booleanValue(reader.get("view.expandUnchanged", false)),
-    enableLineSelection: booleanValue(reader.get("view.enableLineSelection", true)),
-    enableGutterUtility: booleanValue(reader.get("view.enableGutterUtility", false)),
-    useTokenTransformer: booleanValue(reader.get("view.useTokenTransformer", false)),
+    diffIndicators: enumValue(
+      reader,
+      "view.diffIndicators",
+      DIFF_INDICATORS,
+      defaults.diffIndicators,
+    ),
+    hunkSeparators: enumValue(
+      reader,
+      "view.hunkSeparators",
+      HUNK_SEPARATORS,
+      defaults.hunkSeparators,
+    ),
+    lineDiffType: enumValue(reader, "view.lineDiffType", LINE_DIFF_TYPES, defaults.lineDiffType),
+    lineHoverHighlight: enumValue(
+      reader,
+      "view.lineHoverHighlight",
+      LINE_HOVER_HIGHLIGHTS,
+      defaults.lineHoverHighlight,
+    ),
+    disableLineNumbers: booleanValue(
+      reader.get("view.disableLineNumbers", defaults.disableLineNumbers),
+    ),
+    disableFileHeader: booleanValue(
+      reader.get("view.disableFileHeader", defaults.disableFileHeader),
+    ),
+    disableBackground: booleanValue(
+      reader.get("view.disableBackground", defaults.disableBackground),
+    ),
+    expandUnchanged: booleanValue(reader.get("view.expandUnchanged", defaults.expandUnchanged)),
+    enableLineSelection: booleanValue(
+      reader.get("view.enableLineSelection", defaults.enableLineSelection),
+    ),
+    enableGutterUtility: booleanValue(
+      reader.get("view.enableGutterUtility", defaults.enableGutterUtility),
+    ),
+    useTokenTransformer: booleanValue(
+      reader.get("view.useTokenTransformer", defaults.useTokenTransformer),
+    ),
     enableTokenInteractionsOnWhitespace: booleanValue(
-      reader.get("view.enableTokenInteractionsOnWhitespace", false),
+      reader.get(
+        "view.enableTokenInteractionsOnWhitespace",
+        defaults.enableTokenInteractionsOnWhitespace,
+      ),
     ),
     disableVirtualizationBuffers: booleanValue(
-      reader.get("view.disableVirtualizationBuffers", false),
+      reader.get("view.disableVirtualizationBuffers", defaults.disableVirtualizationBuffers),
     ),
-    stickyHeaders: booleanValue(reader.get("view.stickyHeaders", true)),
-    pointerEventsOnScroll: booleanValue(reader.get("view.pointerEventsOnScroll", false)),
+    stickyHeaders: booleanValue(reader.get("view.stickyHeaders", defaults.stickyHeaders)),
+    pointerEventsOnScroll: booleanValue(
+      reader.get("view.pointerEventsOnScroll", defaults.pointerEventsOnScroll),
+    ),
     showToolbar: booleanValue(reader.get("view.showToolbar", true)),
     showStats: booleanValue(reader.get("view.showStats", true)),
     collapsedContextThreshold: integerValue(
-      reader.get("view.collapsedContextThreshold", 1),
+      reader.get("view.collapsedContextThreshold", defaults.collapsedContextThreshold),
       0,
       10000,
-      1,
+      defaults.collapsedContextThreshold,
     ),
-    expansionLineCount: integerValue(reader.get("view.expansionLineCount", 20), 1, 10000, 20),
-    maxLineDiffLength: integerValue(reader.get("view.maxLineDiffLength", 5000), 1, 100000, 5000),
-    tokenizeMaxLineLength: integerValue(
-      reader.get("view.tokenizeMaxLineLength", 1000),
+    expansionLineCount: integerValue(
+      reader.get("view.expansionLineCount", defaults.expansionLineCount),
+      1,
+      10000,
+      defaults.expansionLineCount,
+    ),
+    maxLineDiffLength: integerValue(
+      reader.get("view.maxLineDiffLength", defaults.maxLineDiffLength),
       1,
       100000,
-      1000,
+      defaults.maxLineDiffLength,
+    ),
+    tokenizeMaxLineLength: integerValue(
+      reader.get("view.tokenizeMaxLineLength", defaults.tokenizeMaxLineLength),
+      1,
+      100000,
+      defaults.tokenizeMaxLineLength,
     ),
     tokenizeMaxLength: integerValue(
-      reader.get("view.tokenizeMaxLength", 100000),
+      reader.get("view.tokenizeMaxLength", defaults.tokenizeMaxLength),
       1,
       10000000,
-      100000,
+      defaults.tokenizeMaxLength,
     ),
     maxFileSizeBytes: integerValue(
       reader.get("view.maxFileSizeBytes", 10485760),
@@ -81,7 +129,7 @@ export function settingsFromReader(reader: ConfigurationReader): DiffPreviewSett
       104857600,
       10485760,
     ),
-    customCss: stringValue(reader.get("view.customCss", "")),
+    customCss: stringValue(reader.get("view.customCss", defaults.customCss)),
   };
 }
 

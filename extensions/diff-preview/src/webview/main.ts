@@ -22,6 +22,7 @@ type LocalSettingOverrides = Partial<
 const vscode = acquireVsCodeApi();
 const strings = readWebviewStrings();
 const toolbar = requiredElement<HTMLElement>("toolbar");
+const surface = requiredElement<HTMLElement>("surface");
 const statsNode = requiredElement<HTMLElement>("stats");
 const notice = requiredElement<HTMLElement>("notice");
 const viewer = requiredElement<HTMLElement>("viewer");
@@ -37,8 +38,21 @@ let rendererModulePromise: Promise<typeof import("./renderer")> | undefined;
 let latestMessage: DiffPreviewExtensionToWebviewMessage | undefined;
 let localOverrides: LocalSettingOverrides = {};
 let renderRevision = 0;
+let vscodeThemeType = resolveVsCodeThemeType();
+const themeObserver = new MutationObserver(() => {
+  const nextThemeType = resolveVsCodeThemeType();
+  if (nextThemeType === vscodeThemeType) {
+    return;
+  }
+
+  vscodeThemeType = nextThemeType;
+  if (latestMessage?.settings.themeType === "system") {
+    void renderLatest();
+  }
+});
 
 wireToolbar();
+themeObserver.observe(document.body, { attributeFilter: ["class"], attributes: true });
 
 window.addEventListener("message", (event: MessageEvent<DiffPreviewExtensionToWebviewMessage>) => {
   if (event.data.type === "update") {
@@ -46,6 +60,7 @@ window.addEventListener("message", (event: MessageEvent<DiffPreviewExtensionToWe
     void renderLatest();
   }
 });
+window.addEventListener("beforeunload", () => themeObserver.disconnect());
 
 // oxlint-disable-next-line unicorn/require-post-message-target-origin -- VS Code Webview API postMessage has no targetOrigin parameter.
 vscode.postMessage({ type: "ready" });
@@ -110,10 +125,12 @@ async function renderLatest(): Promise<void> {
 }
 
 function resolveSettings(settings: DiffPreviewSettings): DiffPreviewSettings {
-  return {
+  const resolved = {
     ...settings,
     ...localOverrides,
   };
+
+  return resolved.themeType === "system" ? { ...resolved, themeType: vscodeThemeType } : resolved;
 }
 
 function wireToolbar(): void {
@@ -250,11 +267,13 @@ function hideNotice(): void {
 function showFallback(text: string): void {
   fallback.textContent = text;
   fallback.hidden = text.length === 0;
+  surface.classList.toggle("fallback-visible", text.length > 0);
 }
 
 function hideFallback(): void {
   fallback.textContent = "";
   fallback.hidden = true;
+  surface.classList.remove("fallback-visible");
 }
 
 function requiredElement<TElement extends HTMLElement>(id: string): TElement {
@@ -265,6 +284,13 @@ function requiredElement<TElement extends HTMLElement>(id: string): TElement {
   }
 
   return element as TElement;
+}
+
+function resolveVsCodeThemeType(): "dark" | "light" {
+  return document.body.classList.contains("vscode-light") ||
+    document.body.classList.contains("vscode-high-contrast-light")
+    ? "light"
+    : "dark";
 }
 
 function readWebviewStrings(): DiffPreviewWebviewStrings {
