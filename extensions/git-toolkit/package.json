@@ -33,14 +33,14 @@
     "@pierre/trees": "1.0.0-beta.6"
   },
   "devDependencies": {
-    "@types/vscode": "1.105.0",
-    "@vitest/coverage-v8": "4.1.9",
+    "@types/vscode": "1.125.0",
+    "@vitest/coverage-v8": "4.1.10",
     "@vscode/vsce": "3.9.2",
-    "oxfmt": "0.55.0",
-    "oxlint": "1.70.0",
-    "rolldown": "1.1.2",
+    "oxfmt": "0.62.0",
+    "oxlint": "1.77.0",
+    "rolldown": "1.2.3",
     "typescript": "6.0.3",
-    "vitest": "4.1.9"
+    "vitest": "4.1.10"
   },
   "l10n": "./l10n",
   "contributes": {

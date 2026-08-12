@@ -29,16 +29,16 @@
     "verify:vsix": "node scripts/verify-vsix.mjs extensions/git-toolkit"
   },
   "devDependencies": {
-    "@commitlint/cli": "21.0.2",
-    "@commitlint/config-conventional": "21.0.2",
-    "@types/node": "26.0.0",
-    "@vitest/coverage-v8": "4.1.9",
-    "oxfmt": "0.55.0",
-    "oxlint": "1.70.0",
-    "rolldown": "1.1.2",
-    "turbo": "2.9.18",
+    "@commitlint/cli": "21.2.1",
+    "@commitlint/config-conventional": "21.2.0",
+    "@types/node": "26.2.0",
+    "@vitest/coverage-v8": "4.1.10",
+    "oxfmt": "0.62.0",
+    "oxlint": "1.77.0",
+    "rolldown": "1.2.3",
+    "turbo": "2.10.9",
     "typescript": "6.0.3",
-    "vitest": "4.1.9"
+    "vitest": "4.1.10"
   },
   "engines": {
     "node": ">=22.0.0",
