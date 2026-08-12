@@ -15,7 +15,7 @@ const REQUIRED_PACKAGE_FILES = [
   "extension/third_party_notices.md",
 ];
 const FORBIDDEN_PACKAGE_ENTRY =
-  /(?:^|\/)(?:\.env(?:\.|$)|\.git(?:\/|$)|\.DS_Store$|node_modules\/|src\/|test\/)|(?:\.map|\.tsbuildinfo|\.vsix)$/i;
+  /(?:^|\/)(?:\.env(?:\.|$)|\.git(?:\/|$)|\.DS_Store$|node_modules\/|src\/|test\/)|(?:\.map|\.tsbuildinfo|\.vsix(?:\.sha256)?)$/i;
 
 const extensionDirectories = process.argv.slice(2);
 if (extensionDirectories.length === 0) {
@@ -86,6 +86,7 @@ async function verifyExtensionPackage(extensionDirectory) {
   const requiredEntries = [
     ...REQUIRED_PACKAGE_FILES,
     extensionMain,
+    "extension/dist/webview/diff-preview.js",
     "extension/dist/webview/main.js",
   ];
   for (const requiredEntry of requiredEntries) {

@@ -1,6 +1,7 @@
 # ADR 0002: Adapt the `mr` release pipeline for a multi-extension workspace
 
-- Status: Accepted
+- Status: Superseded
+- Superseded by: [ADR 0003](0003-consolidate-git-toolkit.md)
 - Date: 2026-08-11
 - Review date: 2027-02-11
 - Owner: `@JUNERDD`

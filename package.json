@@ -2,7 +2,7 @@
   "name": "vscode-plugins",
   "version": "0.0.0",
   "private": true,
-  "description": "Turborepo workspace for the Diff Preview and Commit Tree VS Code extensions.",
+  "description": "Turborepo workspace for the Git Toolkit VS Code extension.",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
@@ -20,16 +20,13 @@
     "lint:fix": "oxlint . --fix --import-plugin --react-plugin --jsx-a11y-plugin --nextjs-plugin --node-plugin --promise-plugin",
     "package:vsix": "turbo run package:vsix",
     "prepare": "git config core.hooksPath .githooks",
-    "release:commit-tree:major": "pnpm check && pnpm --dir extensions/commit-tree version major --tag-version-prefix=commit-tree-v -m \"chore(commit-tree): release v%s\"",
-    "release:commit-tree:minor": "pnpm check && pnpm --dir extensions/commit-tree version minor --tag-version-prefix=commit-tree-v -m \"chore(commit-tree): release v%s\"",
-    "release:commit-tree:patch": "pnpm check && pnpm --dir extensions/commit-tree version patch --tag-version-prefix=commit-tree-v -m \"chore(commit-tree): release v%s\"",
-    "release:diff-preview:major": "pnpm check && pnpm --dir extensions/diff-preview version major --tag-version-prefix=diff-preview-v -m \"chore(diff-preview): release v%s\"",
-    "release:diff-preview:minor": "pnpm check && pnpm --dir extensions/diff-preview version minor --tag-version-prefix=diff-preview-v -m \"chore(diff-preview): release v%s\"",
-    "release:diff-preview:patch": "pnpm check && pnpm --dir extensions/diff-preview version patch --tag-version-prefix=diff-preview-v -m \"chore(diff-preview): release v%s\"",
+    "release:git-toolkit:major": "pnpm check && pnpm --dir extensions/git-toolkit version major --tag-version-prefix=git-toolkit-v -m \"publish(git-toolkit): release v%s\"",
+    "release:git-toolkit:minor": "pnpm check && pnpm --dir extensions/git-toolkit version minor --tag-version-prefix=git-toolkit-v -m \"publish(git-toolkit): release v%s\"",
+    "release:git-toolkit:patch": "pnpm check && pnpm --dir extensions/git-toolkit version patch --tag-version-prefix=git-toolkit-v -m \"publish(git-toolkit): release v%s\"",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "typecheck": "turbo run typecheck",
-    "verify:vsix": "node scripts/verify-vsix.mjs extensions/diff-preview extensions/commit-tree"
+    "verify:vsix": "node scripts/verify-vsix.mjs extensions/git-toolkit"
   },
   "devDependencies": {
     "@commitlint/cli": "21.0.2",

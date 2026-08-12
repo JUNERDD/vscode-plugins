@@ -3,7 +3,7 @@
 ## Before opening a change
 
 - Use an issue for bugs or a short proposal for behavior, public contracts, or architecture.
-- Keep extension-specific behavior inside its owning `extensions/*` workspace.
+- Keep extension-specific behavior inside `extensions/git-toolkit`.
 - Reuse `packages/*` only when a stable capability has multiple real consumers, tests, and a
   clear owner.
 - Preserve the repository's current `UNLICENSED` status. Discuss licensing changes separately
@@ -32,11 +32,10 @@ auto-merged.
 
 ## Releases
 
-Release tags are extension-specific:
+Git Toolkit releases use one namespaced tag:
 
-- `diff-preview-v<version>`
-- `commit-tree-v<version>`
+- `git-toolkit-v<version>`
 
 Only maintainers should create version commits and tags. GitHub Actions validates the tag,
-runs the full quality gate, builds the target VSIX, generates its SHA-256 checksum, and creates
-the GitHub Release.
+runs the full quality gate, builds the Git Toolkit VSIX, generates its SHA-256 checksum, and
+creates the GitHub Release.

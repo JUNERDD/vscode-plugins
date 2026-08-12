@@ -3,8 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "commit-tree-v*"
-      - "diff-preview-v*"
+      - "git-toolkit-v*"
 
 permissions:
   contents: read
@@ -37,22 +36,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          case "$GITHUB_REF_NAME" in
-            commit-tree-v*)
-              extension="commit-tree"
-              display_name="Commit Tree"
-              version="${GITHUB_REF_NAME#commit-tree-v}"
-              ;;
-            diff-preview-v*)
-              extension="diff-preview"
-              display_name="Diff Preview"
-              version="${GITHUB_REF_NAME#diff-preview-v}"
-              ;;
-            *)
-              echo "::error::Unsupported release tag ${GITHUB_REF_NAME}."
-              exit 1
-              ;;
-          esac
+          if [[ "$GITHUB_REF_NAME" != git-toolkit-v* ]]; then
+            echo "::error::Unsupported release tag ${GITHUB_REF_NAME}."
+            exit 1
+          fi
+
+          extension="git-toolkit"
+          display_name="Git Toolkit"
+          version="${GITHUB_REF_NAME#git-toolkit-v}"
 
           if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
             echo "::error::Release tag ${GITHUB_REF_NAME} does not contain a valid semantic version."
@@ -188,7 +179,24 @@ jobs:
             if [[ -n "$PREVIOUS_TAG" ]]; then
               create_args+=(--generate-notes --notes-start-tag "$PREVIOUS_TAG")
             else
-              create_args+=(--notes "Initial ${DISPLAY_NAME} release.")
+              release_notes="$(mktemp)"
+              printf '%s\n' \
+                "Git Toolkit combines Commit Tree, Diff Preview, and branch-to-working-file comparison in one extension." \
+                "" \
+                "### Migration from the former extensions" \
+                "" \
+                "- Install vscode-plugins.git-toolkit, then uninstall vscode-plugins.commit-tree and vscode-plugins.diff-preview." \
+                "- vscode-plugins-commit-tree.openCommit becomes vscode-plugins-git-toolkit.openCommit." \
+                "- vscode-plugins-commit-tree.openFromHistory becomes vscode-plugins-git-toolkit.openFromHistory." \
+                "- vscode-plugins-diff-preview.openPreview becomes vscode-plugins-git-toolkit.openDiffPreview." \
+                "- vscode-plugins-diff-preview.openPreviewToSide becomes vscode-plugins-git-toolkit.openDiffPreviewToSide." \
+                "- Commit Tree layout and patch-limit settings move from commitTree.* to gitToolkit.commitTree.*; its diff-renderer settings move to gitToolkit.diff.*." \
+                "- Diff Preview toolbar, statistics, and file-limit settings move from diffPreview.* to gitToolkit.diffPreview.*; its diff-renderer settings move to gitToolkit.diff.*." \
+                "- Customized settings are not copied automatically and must be reapplied under the new keys." \
+                "" \
+                "The new vscode-plugins-git-toolkit.compareFileWithBranch command compares the working file with the same file on a selected local or remote branch." \
+                > "$release_notes"
+              create_args+=(--notes-file "$release_notes")
             fi
             gh release create "${create_args[@]}"
             release_is_draft=true

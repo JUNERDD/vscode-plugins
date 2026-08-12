@@ -1,0 +1,365 @@
+{
+  "name": "git-toolkit",
+  "displayName": "%extension.displayName%",
+  "version": "0.1.0",
+  "private": true,
+  "description": "%extension.description%",
+  "categories": [
+    "SCM Providers",
+    "Visualization"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JUNERDD/vscode-plugins.git",
+    "directory": "extensions/git-toolkit"
+  },
+  "publisher": "vscode-plugins",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "pnpm run clean && rolldown -c",
+    "clean": "rm -rf dist",
+    "dev": "rolldown -c --watch",
+    "format": "oxfmt --write \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
+    "format:check": "oxfmt --check \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
+    "lint": "oxlint src test rolldown.config.mjs vitest.config.ts",
+    "package:vsix": "pnpm run build && pnpm exec vsce package --no-dependencies",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pierre/diffs": "1.3.1",
+    "@pierre/trees": "1.0.0-beta.6"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.105.0",
+    "@vitest/coverage-v8": "4.1.9",
+    "@vscode/vsce": "3.9.2",
+    "oxfmt": "0.55.0",
+    "oxlint": "1.70.0",
+    "rolldown": "1.1.2",
+    "typescript": "6.0.3",
+    "vitest": "4.1.9"
+  },
+  "l10n": "./l10n",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-plugins-git-toolkit.openCommit",
+        "title": "%command.openCommit.title%",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "vscode-plugins-git-toolkit.openFromHistory",
+        "title": "%command.openFromHistory.title%",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "vscode-plugins-git-toolkit.openDiffPreview",
+        "title": "%command.openDiffPreview.title%"
+      },
+      {
+        "command": "vscode-plugins-git-toolkit.openDiffPreviewToSide",
+        "title": "%command.openDiffPreviewToSide.title%"
+      },
+      {
+        "command": "vscode-plugins-git-toolkit.compareFileWithBranch",
+        "title": "%command.compareFileWithBranch.title%",
+        "icon": "$(git-compare)"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "vscode-plugins-git-toolkit.diffPreview",
+        "displayName": "%customEditor.diffPreview.displayName%",
+        "selector": [
+          {
+            "filenamePattern": "*.diff"
+          },
+          {
+            "filenamePattern": "*.patch"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "vscode-plugins-git-toolkit.openFromHistory",
+          "when": "resourceScheme == scm-history-item",
+          "group": "navigation@0"
+        },
+        {
+          "command": "vscode-plugins-git-toolkit.openDiffPreviewToSide",
+          "when": "resourceExtname == .diff || resourceExtname == .patch",
+          "group": "navigation@40"
+        },
+        {
+          "command": "vscode-plugins-git-toolkit.compareFileWithBranch",
+          "when": "resourceScheme == file",
+          "group": "navigation@0"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "vscode-plugins-git-toolkit.compareFileWithBranch",
+          "when": "resourceScheme == file",
+          "group": "1_modification@50"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "vscode-plugins-git-toolkit.compareFileWithBranch",
+          "when": "resourceScheme == file",
+          "group": "3_compare@10"
+        }
+      ],
+      "scm/title": [
+        {
+          "command": "vscode-plugins-git-toolkit.openCommit",
+          "when": "scmProvider == git",
+          "group": "navigation@50"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "%configuration.title%",
+      "properties": {
+        "gitToolkit.diff.defaultStyle": {
+          "type": "string",
+          "enum": [
+            "split",
+            "unified"
+          ],
+          "default": "split",
+          "description": "%configuration.diff.defaultStyle.description%"
+        },
+        "gitToolkit.diff.overflow": {
+          "type": "string",
+          "enum": [
+            "scroll",
+            "wrap"
+          ],
+          "default": "scroll",
+          "description": "%configuration.diff.overflow.description%"
+        },
+        "gitToolkit.diff.themeType": {
+          "type": "string",
+          "enum": [
+            "system",
+            "light",
+            "dark"
+          ],
+          "default": "system",
+          "description": "%configuration.diff.themeType.description%"
+        },
+        "gitToolkit.diff.darkTheme": {
+          "type": "string",
+          "default": "pierre-dark",
+          "description": "%configuration.diff.darkTheme.description%"
+        },
+        "gitToolkit.diff.lightTheme": {
+          "type": "string",
+          "default": "pierre-light",
+          "description": "%configuration.diff.lightTheme.description%"
+        },
+        "gitToolkit.diff.preferredHighlighter": {
+          "type": "string",
+          "enum": [
+            "shiki-js",
+            "shiki-wasm"
+          ],
+          "default": "shiki-js",
+          "description": "%configuration.diff.preferredHighlighter.description%"
+        },
+        "gitToolkit.diff.diffIndicators": {
+          "type": "string",
+          "enum": [
+            "classic",
+            "bars",
+            "none"
+          ],
+          "default": "classic",
+          "description": "%configuration.diff.diffIndicators.description%"
+        },
+        "gitToolkit.diff.hunkSeparators": {
+          "type": "string",
+          "enum": [
+            "simple",
+            "metadata",
+            "line-info",
+            "line-info-basic"
+          ],
+          "default": "line-info",
+          "description": "%configuration.diff.hunkSeparators.description%"
+        },
+        "gitToolkit.diff.lineDiffType": {
+          "type": "string",
+          "enum": [
+            "word-alt",
+            "word",
+            "char",
+            "none"
+          ],
+          "default": "word",
+          "description": "%configuration.diff.lineDiffType.description%"
+        },
+        "gitToolkit.diff.lineHoverHighlight": {
+          "type": "string",
+          "enum": [
+            "disabled",
+            "both",
+            "number",
+            "line"
+          ],
+          "default": "line",
+          "description": "%configuration.diff.lineHoverHighlight.description%"
+        },
+        "gitToolkit.diff.disableLineNumbers": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.disableLineNumbers.description%"
+        },
+        "gitToolkit.diff.disableFileHeader": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.disableFileHeader.description%"
+        },
+        "gitToolkit.diff.disableBackground": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.disableBackground.description%"
+        },
+        "gitToolkit.diff.expandUnchanged": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.expandUnchanged.description%"
+        },
+        "gitToolkit.diff.enableLineSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.diff.enableLineSelection.description%"
+        },
+        "gitToolkit.diff.enableGutterUtility": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.enableGutterUtility.description%"
+        },
+        "gitToolkit.diff.useTokenTransformer": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.useTokenTransformer.description%"
+        },
+        "gitToolkit.diff.enableTokenInteractionsOnWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.enableTokenInteractionsOnWhitespace.description%"
+        },
+        "gitToolkit.diff.disableVirtualizationBuffers": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.disableVirtualizationBuffers.description%"
+        },
+        "gitToolkit.diff.stickyHeaders": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.diff.stickyHeaders.description%"
+        },
+        "gitToolkit.diff.pointerEventsOnScroll": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.diff.pointerEventsOnScroll.description%"
+        },
+        "gitToolkit.diff.collapsedContextThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10000,
+          "default": 1,
+          "description": "%configuration.diff.collapsedContextThreshold.description%"
+        },
+        "gitToolkit.diff.expansionLineCount": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 20,
+          "description": "%configuration.diff.expansionLineCount.description%"
+        },
+        "gitToolkit.diff.maxLineDiffLength": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 5000,
+          "description": "%configuration.diff.maxLineDiffLength.description%"
+        },
+        "gitToolkit.diff.tokenizeMaxLineLength": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 1000,
+          "description": "%configuration.diff.tokenizeMaxLineLength.description%"
+        },
+        "gitToolkit.diff.tokenizeMaxLength": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10000000,
+          "default": 100000,
+          "description": "%configuration.diff.tokenizeMaxLength.description%"
+        },
+        "gitToolkit.diff.customCss": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.diff.customCss.description%"
+        },
+        "gitToolkit.commitTree.treeWidth": {
+          "type": "number",
+          "minimum": 180,
+          "maximum": 600,
+          "default": 280,
+          "description": "%configuration.commitTree.treeWidth.description%"
+        },
+        "gitToolkit.commitTree.flattenEmptyDirectories": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.commitTree.flattenEmptyDirectories.description%"
+        },
+        "gitToolkit.commitTree.maxPatchSizeBytes": {
+          "type": "number",
+          "minimum": 1048576,
+          "maximum": 104857600,
+          "default": 26214400,
+          "description": "%configuration.commitTree.maxPatchSizeBytes.description%"
+        },
+        "gitToolkit.diffPreview.showToolbar": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.diffPreview.showToolbar.description%"
+        },
+        "gitToolkit.diffPreview.showStats": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.diffPreview.showStats.description%"
+        },
+        "gitToolkit.diffPreview.maxFileSizeBytes": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 104857600,
+          "default": 10485760,
+          "description": "%configuration.diffPreview.maxFileSizeBytes.description%"
+        }
+      }
+    }
+  },
+  "activationEvents": [
+    "onCommand:vscode-plugins-git-toolkit.compareFileWithBranch",
+    "onCommand:vscode-plugins-git-toolkit.openCommit",
+    "onCommand:vscode-plugins-git-toolkit.openDiffPreview",
+    "onCommand:vscode-plugins-git-toolkit.openDiffPreviewToSide",
+    "onCommand:vscode-plugins-git-toolkit.openFromHistory",
+    "onCustomEditor:vscode-plugins-git-toolkit.diffPreview"
+  ],
+  "engines": {
+    "vscode": "^1.105.0"
+  }
+}
