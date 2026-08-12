@@ -47,30 +47,19 @@ jobs:
       - name: Audit dependencies
         run: pnpm audit:dependencies
 
-      - name: Package extensions
+      - name: Package Git Toolkit
         run: pnpm package:vsix
 
-      - name: Verify extension packages
+      - name: Verify Git Toolkit package
         run: pnpm verify:vsix
 
-      - name: Upload Diff Preview package
+      - name: Upload Git Toolkit package
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: diff-preview-${{ github.sha }}
+          name: git-toolkit-${{ github.sha }}
           path: |
-            extensions/diff-preview/diff-preview-*.vsix
-            extensions/diff-preview/diff-preview-*.vsix.sha256
-          if-no-files-found: error
-          retention-days: 14
-          compression-level: 0
-
-      - name: Upload Commit Tree package
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: commit-tree-${{ github.sha }}
-          path: |
-            extensions/commit-tree/commit-tree-*.vsix
-            extensions/commit-tree/commit-tree-*.vsix.sha256
+            extensions/git-toolkit/git-toolkit-*.vsix
+            extensions/git-toolkit/git-toolkit-*.vsix.sha256
           if-no-files-found: error
           retention-days: 14
           compression-level: 0

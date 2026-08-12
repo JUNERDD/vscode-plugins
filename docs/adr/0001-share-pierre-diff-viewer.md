@@ -1,6 +1,7 @@
 # ADR 0001: Share the Pierre diff viewer contract
 
-- Status: Accepted
+- Status: Superseded
+- Superseded by: [ADR 0003](0003-consolidate-git-toolkit.md)
 - Decision date: 2026-08-01
 - Review date: 2027-02-01
 - Owner: VS Code extensions maintainers

@@ -1,22 +1,21 @@
 name: Bug report
-description: Report reproducible incorrect behavior in an extension.
+description: Report reproducible incorrect behavior in Git Toolkit.
 title: "[Bug]: "
 labels:
   - bug
 body:
   - type: dropdown
-    id: extension
+    id: product
     attributes:
-      label: Extension
+      label: Product
       options:
-        - Commit Tree
-        - Diff Preview
+        - Git Toolkit
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Extension version
+      label: Git Toolkit version
       placeholder: 0.0.1
     validations:
       required: true

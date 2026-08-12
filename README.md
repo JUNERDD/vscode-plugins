@@ -1,24 +1,22 @@
-# VS Code Plugins
+# Git Toolkit
 
 [![CI](https://github.com/JUNERDD/vscode-plugins/actions/workflows/ci.yml/badge.svg)](https://github.com/JUNERDD/vscode-plugins/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/JUNERDD/vscode-plugins/actions/workflows/codeql.yml/badge.svg)](https://github.com/JUNERDD/vscode-plugins/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/badge/license-All%20rights%20reserved-lightgrey.svg)](#license)
 
-A focused Turborepo workspace for building, testing, packaging, and releasing VS Code
-extensions.
+A focused Turborepo workspace for building, testing, packaging, and releasing the Git Toolkit
+VS Code extension.
 
-## Projects
+## Workspace
 
 | Workspace | Purpose |
 | --- | --- |
-| [`extensions/diff-preview`](extensions/diff-preview) | Read-only custom editor for rich `.diff` and `.patch` previews. |
-| [`extensions/commit-tree`](extensions/commit-tree) | Searchable commit file tree with a virtualized multi-file diff. |
-| [`packages/pierre-diff-viewer`](packages/pierre-diff-viewer) | Tested adapter shared by both extensions for Pierre parsing and rendering. |
+| [`extensions/git-toolkit`](extensions/git-toolkit) | Commit browsing, rich diff and patch previews, and branch-to-working-file comparisons. |
 
-The extensions keep independent manifests, tests, localization, attribution, and VSIX
-contents. Shared behavior lives in `packages/*` only when it has multiple real consumers.
-The architectural decision is documented in
-[`docs/adr/0001-share-pierre-diff-viewer.md`](docs/adr/0001-share-pierre-diff-viewer.md).
+Git Toolkit combines the former Commit Tree and Diff Preview experiences in one extension and
+one VSIX. Pierre parsing and rendering stay local to the extension because they now have one
+consumer. The consolidation decision and migration boundary are documented in
+[`docs/adr/0003-consolidate-git-toolkit.md`](docs/adr/0003-consolidate-git-toolkit.md).
 
 ## Install a release
 
@@ -27,8 +25,19 @@ Download the required `.vsix` and matching `.sha256` file from
 then install from VS Code with **Extensions: Install from VSIX...** or from a terminal:
 
 ```sh
-code --install-extension path/to/extension.vsix --force
+code --install-extension path/to/git-toolkit-0.1.0.vsix --force
 ```
+
+## Migrate from the former extensions
+
+Git Toolkit uses the new extension ID `vscode-plugins.git-toolkit`. It replaces
+`vscode-plugins.commit-tree` and `vscode-plugins.diff-preview`; those extension IDs and their
+release tags remain historical and receive no new releases. VS Code treats Git Toolkit as a
+separate extension, so uninstall the former extensions and install the Git Toolkit VSIX.
+
+The first Git Toolkit release notes must identify renamed commands and configuration keys. VS
+Code does not automatically transfer enabled state or settings that remain scoped to an old
+extension or configuration namespace.
 
 ## Development
 
@@ -51,7 +60,7 @@ Useful commands:
 | `pnpm audit:dependencies` | Reject known high-severity dependency vulnerabilities. |
 | `pnpm dev` | Run workspace development tasks. |
 | `pnpm check` | Format check, lint, typecheck, test, and build every workspace. |
-| `pnpm package:vsix` | Package every publishable extension. |
+| `pnpm package:vsix` | Package the Git Toolkit extension. |
 | `pnpm verify:vsix` | Verify manifests, required files, forbidden files, size, ZIP integrity, and checksums. |
 | `pnpm test:coverage` | Generate workspace coverage reports. |
 
@@ -61,36 +70,33 @@ release artifacts from a frozen lockfile.
 ## CI/CD
 
 The pipeline adapts the proven release shape used by
-[`JUNERDD/mr`](https://github.com/JUNERDD/mr) to this multi-extension workspace:
+[`JUNERDD/mr`](https://github.com/JUNERDD/mr) to this workspace:
 
 - **CI** runs the full quality gate and dependency audit on pull requests and `main`, packages
-  both extensions, validates each VSIX, and retains the artifacts for 14 days.
+  and validates the Git Toolkit VSIX, and retains it for 14 days.
 - **Dependency Review** rejects newly introduced high-severity vulnerable dependencies.
 - **CodeQL** scans JavaScript and TypeScript on pull requests, `main`, and a weekly schedule.
 - **Dependabot** proposes grouped pnpm and GitHub Actions updates without auto-merging.
-- **Release** accepts only namespaced tags whose version matches the target manifest and
-  whose commit is reachable from `main`. It publishes an immutable VSIX and SHA-256 file
-  to GitHub Releases.
+- **Release** accepts only `git-toolkit-v*` tags whose version matches the manifest and whose
+  commit is reachable from `main`. It publishes an immutable VSIX and SHA-256 file to GitHub
+  Releases.
 
 Actions are pinned to full commit SHAs, workflow permissions are read-only by default, and
 only the release job receives `contents: write`.
 
-## Release an extension
+## Release Git Toolkit
 
-From a clean, up-to-date `main` branch, choose the extension and semantic version bump:
+From a clean, up-to-date `main` branch, choose the semantic version bump:
 
 ```sh
-pnpm release:diff-preview:patch
-# or
-pnpm release:commit-tree:patch
+pnpm release:git-toolkit:patch
 
 git push origin main --follow-tags
 ```
 
 Use the corresponding `:minor` or `:major` command when needed. Tags use
-`diff-preview-v<version>` and `commit-tree-v<version>` respectively. The workflow refuses
-cross-extension tags, version mismatches, tags outside `main`, invalid archives, and changed
-assets on an existing release.
+`git-toolkit-v<version>`. The workflow refuses version mismatches, tags outside `main`, invalid
+archives, and changed assets on an existing release.
 
 ## Contributing and security
 

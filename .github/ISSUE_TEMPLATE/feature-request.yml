@@ -1,5 +1,5 @@
 name: Feature request
-description: Propose a focused improvement to an extension or shared workflow.
+description: Propose a focused improvement to Git Toolkit or its repository workflow.
 title: "[Feature]: "
 labels:
   - enhancement
@@ -9,9 +9,9 @@ body:
     attributes:
       label: Area
       options:
-        - Commit Tree
-        - Diff Preview
-        - Shared diff viewer
+        - Commit browsing
+        - Diff and patch preview
+        - Branch file comparison
         - Build and release tooling
     validations:
       required: true
