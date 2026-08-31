@@ -9,6 +9,12 @@ updates:
       time: "04:00"
       timezone: Asia/Shanghai
     open-pull-requests-limit: 5
+    # vsce rejects @types/vscode newer than engines.vscode; bump both together.
+    ignore:
+      - dependency-name: "@types/vscode"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-major"
     groups:
       production-dependencies:
         dependency-type: production
