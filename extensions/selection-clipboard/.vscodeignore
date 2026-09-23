@@ -1,0 +1,12 @@
+.turbo/**
+coverage/**
+node_modules/**
+src/**
+test/**
+*.vsix
+*.vsix.sha256
+*.tsbuildinfo
+rolldown.config.mjs
+tsconfig.json
+vitest.config.ts
+dist/**/*.map

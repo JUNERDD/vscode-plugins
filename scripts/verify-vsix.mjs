@@ -14,6 +14,16 @@ const REQUIRED_PACKAGE_FILES = [
   "extension/readme.md",
   "extension/third_party_notices.md",
 ];
+/**
+ * Additional archive entries required per extension, keyed by manifest `name`. Extensions that
+ * ship only the common files and their `main` entry need no row here.
+ */
+const EXTRA_REQUIRED_ENTRIES = Object.freeze({
+  "git-toolkit": Object.freeze([
+    "extension/dist/webview/diff-preview.js",
+    "extension/dist/webview/main.js",
+  ]),
+});
 const FORBIDDEN_PACKAGE_ENTRY =
   /(?:^|\/)(?:\.env(?:\.|$)|\.git(?:\/|$)|\.DS_Store$|node_modules\/|src\/|test\/)|(?:\.map|\.tsbuildinfo|\.vsix(?:\.sha256)?)$/i;
 
@@ -86,8 +96,9 @@ async function verifyExtensionPackage(extensionDirectory) {
   const requiredEntries = [
     ...REQUIRED_PACKAGE_FILES,
     extensionMain,
-    "extension/dist/webview/diff-preview.js",
-    "extension/dist/webview/main.js",
+    ...(Object.hasOwn(EXTRA_REQUIRED_ENTRIES, sourceManifest.name)
+      ? EXTRA_REQUIRED_ENTRIES[sourceManifest.name]
+      : []),
   ];
   for (const requiredEntry of requiredEntries) {
     if (!normalizedEntries.has(requiredEntry.toLowerCase())) {

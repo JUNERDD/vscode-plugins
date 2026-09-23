@@ -3,3 +3,4 @@
 /.github/ @JUNERDD
 /docs/adr/ @JUNERDD
 /extensions/git-toolkit/ @JUNERDD
+/extensions/selection-clipboard/ @JUNERDD

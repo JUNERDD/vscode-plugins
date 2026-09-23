@@ -1,0 +1,315 @@
+{
+  "name": "selection-clipboard",
+  "displayName": "%extension.displayName%",
+  "version": "0.0.1",
+  "private": true,
+  "description": "%extension.description%",
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "bookmark",
+    "clipboard",
+    "line number",
+    "location",
+    "reference",
+    "selection"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JUNERDD/vscode-plugins.git",
+    "directory": "extensions/selection-clipboard"
+  },
+  "publisher": "vscode-plugins",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "pnpm run clean && rolldown -c",
+    "clean": "rm -rf dist",
+    "dev": "rolldown -c --watch",
+    "format": "oxfmt --write \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
+    "format:check": "oxfmt --check \"src/**/*.ts\" \"test/**/*.ts\" \"l10n/*.json\" \"package.nls*.json\" rolldown.config.mjs vitest.config.ts package.json tsconfig.json",
+    "lint": "oxlint src test rolldown.config.mjs vitest.config.ts",
+    "package:vsix": "pnpm run build && pnpm exec vsce package --no-dependencies",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.105.0",
+    "@vitest/coverage-v8": "4.1.11",
+    "@vscode/vsce": "3.9.2",
+    "oxfmt": "0.65.0",
+    "oxlint": "1.80.0",
+    "rolldown": "1.2.6",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  },
+  "l10n": "./l10n",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-plugins-selection-clipboard.copyLocation",
+        "title": "%command.copyLocation.title%",
+        "category": "%command.category%",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.addSelection",
+        "title": "%command.addSelection.title%",
+        "category": "%command.category%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.copyAll",
+        "title": "%command.copyAll.title%",
+        "category": "%command.category%",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.clearAll",
+        "title": "%command.clearAll.title%",
+        "category": "%command.category%",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.openItem",
+        "title": "%command.openItem.title%",
+        "category": "%command.category%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.copyItem",
+        "title": "%command.copyItem.title%",
+        "category": "%command.category%",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.editNote",
+        "title": "%command.editNote.title%",
+        "category": "%command.category%",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.updateRange",
+        "title": "%command.updateRange.title%",
+        "category": "%command.category%",
+        "icon": "$(replace)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.moveUp",
+        "title": "%command.moveUp.title%",
+        "category": "%command.category%",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.moveDown",
+        "title": "%command.moveDown.title%",
+        "category": "%command.category%",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.removeItem",
+        "title": "%command.removeItem.title%",
+        "category": "%command.category%",
+        "icon": "$(close)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "selectionClipboard.editorContext",
+        "label": "%submenu.editorContext.label%"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "selectionClipboard.editorContext",
+          "group": "9_cutcopypaste@100"
+        }
+      ],
+      "selectionClipboard.editorContext": [
+        {
+          "command": "vscode-plugins-selection-clipboard.copyLocation",
+          "group": "1_copy@1"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.addSelection",
+          "group": "2_collect@1"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vscode-plugins-selection-clipboard.addSelection",
+          "when": "view == selectionClipboard.items",
+          "group": "navigation@1"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.copyAll",
+          "when": "view == selectionClipboard.items",
+          "group": "navigation@2"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.clearAll",
+          "when": "view == selectionClipboard.items",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "vscode-plugins-selection-clipboard.copyItem",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "inline@1"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.editNote",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "inline@2"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.removeItem",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "inline@3"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.copyItem",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "1_copy@1"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.editNote",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.updateRange",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "2_edit@2"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.moveUp",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "3_order@1"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.moveDown",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "3_order@2"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.removeItem",
+          "when": "view == selectionClipboard.items && viewItem == selectionItem",
+          "group": "4_remove@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vscode-plugins-selection-clipboard.openItem",
+          "when": "false"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.copyItem",
+          "when": "false"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.editNote",
+          "when": "false"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.updateRange",
+          "when": "false"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.moveUp",
+          "when": "false"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.moveDown",
+          "when": "false"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.removeItem",
+          "when": "false"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "selectionClipboard",
+          "title": "%viewsContainer.selectionClipboard.title%",
+          "icon": "media/selection-clipboard.svg"
+        }
+      ]
+    },
+    "views": {
+      "selectionClipboard": [
+        {
+          "id": "selectionClipboard.items",
+          "name": "%view.items.name%"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "selectionClipboard.items",
+        "contents": "%viewsWelcome.items.contents%"
+      }
+    ],
+    "configuration": {
+      "title": "%configuration.title%",
+      "properties": {
+        "selectionClipboard.locationStyle": {
+          "type": "string",
+          "enum": [
+            "lineColumn",
+            "lineRange",
+            "githubAnchor"
+          ],
+          "default": "lineColumn",
+          "markdownEnumDescriptions": [
+            "%configuration.locationStyle.lineColumn.description%",
+            "%configuration.locationStyle.lineRange.description%",
+            "%configuration.locationStyle.githubAnchor.description%"
+          ],
+          "markdownDescription": "%configuration.locationStyle.description%"
+        },
+        "selectionClipboard.pathStyle": {
+          "type": "string",
+          "enum": [
+            "workspaceRelative",
+            "absolute"
+          ],
+          "default": "workspaceRelative",
+          "markdownEnumDescriptions": [
+            "%configuration.pathStyle.workspaceRelative.description%",
+            "%configuration.pathStyle.absolute.description%"
+          ],
+          "markdownDescription": "%configuration.pathStyle.description%"
+        },
+        "selectionClipboard.includeCode": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "%configuration.includeCode.description%"
+        }
+      }
+    }
+  },
+  "activationEvents": [
+    "onCommand:vscode-plugins-selection-clipboard.addSelection",
+    "onCommand:vscode-plugins-selection-clipboard.clearAll",
+    "onCommand:vscode-plugins-selection-clipboard.copyAll",
+    "onCommand:vscode-plugins-selection-clipboard.copyItem",
+    "onCommand:vscode-plugins-selection-clipboard.copyLocation",
+    "onCommand:vscode-plugins-selection-clipboard.editNote",
+    "onCommand:vscode-plugins-selection-clipboard.moveDown",
+    "onCommand:vscode-plugins-selection-clipboard.moveUp",
+    "onCommand:vscode-plugins-selection-clipboard.openItem",
+    "onCommand:vscode-plugins-selection-clipboard.removeItem",
+    "onCommand:vscode-plugins-selection-clipboard.updateRange",
+    "onView:selectionClipboard.items"
+  ],
+  "engines": {
+    "vscode": "^1.105.0"
+  }
+}

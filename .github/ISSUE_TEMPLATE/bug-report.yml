@@ -1,5 +1,5 @@
 name: Bug report
-description: Report reproducible incorrect behavior in Git Toolkit.
+description: Report reproducible incorrect behavior in Git Toolkit or Selection Clipboard.
 title: "[Bug]: "
 labels:
   - bug
@@ -10,12 +10,13 @@ body:
       label: Product
       options:
         - Git Toolkit
+        - Selection Clipboard
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Git Toolkit version
+      label: Extension version
       placeholder: 0.0.1
     validations:
       required: true

@@ -47,10 +47,10 @@ jobs:
       - name: Audit dependencies
         run: pnpm audit:dependencies
 
-      - name: Package Git Toolkit
+      - name: Package extensions
         run: pnpm package:vsix
 
-      - name: Verify Git Toolkit package
+      - name: Verify extension packages
         run: pnpm verify:vsix
 
       - name: Upload Git Toolkit package
@@ -60,6 +60,17 @@ jobs:
           path: |
             extensions/git-toolkit/git-toolkit-*.vsix
             extensions/git-toolkit/git-toolkit-*.vsix.sha256
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
+      - name: Upload Selection Clipboard package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: selection-clipboard-${{ github.sha }}
+          path: |
+            extensions/selection-clipboard/selection-clipboard-*.vsix
+            extensions/selection-clipboard/selection-clipboard-*.vsix.sha256
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
