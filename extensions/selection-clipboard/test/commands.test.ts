@@ -7,6 +7,7 @@ import {
   ADD_SELECTION_COMMAND,
   ALL_COMMANDS,
   CLEAR_ALL_COMMAND,
+  CONFIGURE_KEYBINDINGS_COMMAND,
   COPY_ALL_COMMAND,
   COPY_ITEM_COMMAND,
   COPY_LOCATION_COMMAND,
@@ -102,6 +103,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock("vscode", () => ({
+  commands: { executeCommand: vi.fn(() => Promise.resolve()) },
   env: { clipboard: { writeText: vi.fn(() => Promise.resolve()) } },
   l10n: {
     t: (message: string, args?: Record<string, unknown>) =>
@@ -548,6 +550,44 @@ describe("moveUp and moveDown", () => {
 
     await harness.run(MOVE_DOWN_COMMAND, second);
     expect(harness.store.list().map((item) => item.id)).toEqual([first!.id, second!.id]);
+  });
+});
+
+describe("single-item commands without arguments", () => {
+  it("act on the tree selection only when it holds exactly one item", async () => {
+    const harness = createHarness();
+    const [first, second, third] = await seed(
+      harness,
+      capture(FOO_URI, 0, 0),
+      capture(FOO_URI, 1, 1),
+      capture(FOO_URI, 2, 2),
+    );
+
+    harness.treeSelection = [third!];
+    await harness.run(MOVE_UP_COMMAND);
+    expect(harness.store.list().map(({ id }) => id)).toEqual([first!.id, third!.id, second!.id]);
+
+    harness.treeSelection = [first!, second!];
+    await harness.run(MOVE_DOWN_COMMAND);
+    harness.treeSelection = [];
+    await harness.run(MOVE_DOWN_COMMAND);
+    expect(harness.store.list().map(({ id }) => id)).toEqual([first!.id, third!.id, second!.id]);
+
+    harness.treeSelection = [second!];
+    mocks.window.showInputBox.mockResolvedValueOnce("from keyboard");
+    await harness.run(EDIT_NOTE_COMMAND);
+    expect(harness.store.get(second!.id)?.note).toBe("from keyboard");
+  });
+});
+
+describe("configureKeybindings", () => {
+  it("opens the Keyboard Shortcuts editor filtered to this extension", async () => {
+    await createHarness().run(CONFIGURE_KEYBINDINGS_COMMAND);
+
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
+      "workbench.action.openGlobalKeybindings",
+      "@ext:vscode-plugins.selection-clipboard",
+    );
   });
 });
 

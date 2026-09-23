@@ -7,11 +7,13 @@ import {
   ALL_COMMANDS,
   CLEAR_ALL_COMMAND,
   CONFIGURATION_SECTION,
+  CONFIGURE_KEYBINDINGS_COMMAND,
   COPY_ALL_COMMAND,
   COPY_ITEM_COMMAND,
   COPY_LOCATION_COMMAND,
   EDIT_NOTE_COMMAND,
   EDITOR_CONTEXT_SUBMENU_ID,
+  EXTENSION_ID,
   INCLUDE_CODE_SETTING,
   ITEM_CONTEXT_VALUE,
   ITEMS_VIEW_ID,
@@ -43,6 +45,12 @@ interface ExtensionManifest {
       readonly title: string;
     }[];
     readonly submenus: readonly { readonly id: string; readonly label: string }[];
+    readonly keybindings: readonly {
+      readonly command: string;
+      readonly key: string;
+      readonly mac?: string;
+      readonly when: string;
+    }[];
     readonly configuration: {
       readonly title: string;
       readonly properties: Record<
@@ -63,6 +71,7 @@ interface ExtensionManifest {
   };
   readonly extensionDependencies?: readonly string[];
   readonly name: string;
+  readonly publisher: string;
 }
 
 function readJson<T>(relativePath: string): T {
@@ -75,6 +84,9 @@ const nlsChinese = readJson<Record<string, string>>("../package.nls.zh-cn.json")
 
 const VIEW_WHEN = `view == ${ITEMS_VIEW_ID}`;
 const ITEM_WHEN = `${VIEW_WHEN} && viewItem == ${ITEM_CONTEXT_VALUE}`;
+const EDITOR_KEY_WHEN = "editorTextFocus";
+const EDITOR_OR_VIEW_KEY_WHEN = `editorTextFocus || focusedView == ${ITEMS_VIEW_ID}`;
+const LIST_KEY_WHEN = `focusedView == ${ITEMS_VIEW_ID} && listFocus && !inputFocus`;
 
 /** Item commands receive a tree node argument, so the Command Palette cannot invoke them. */
 const ITEM_ONLY_COMMANDS = [
@@ -114,6 +126,7 @@ describe("Selection Clipboard manifest", () => {
     const commands = manifest.contributes.commands;
 
     expect(manifest.name).toBe("selection-clipboard");
+    expect(`${manifest.publisher}.${manifest.name}`).toBe(EXTENSION_ID);
     expect(commands.map(({ command }) => command)).toEqual([...ALL_COMMANDS]);
     for (const { category, command, icon, title } of commands) {
       const verb = command.slice(command.lastIndexOf(".") + 1);
@@ -184,6 +197,7 @@ describe("Selection Clipboard manifest", () => {
       { command: ADD_SELECTION_COMMAND, when: VIEW_WHEN, group: "navigation@1" },
       { command: COPY_ALL_COMMAND, when: VIEW_WHEN, group: "navigation@2" },
       { command: CLEAR_ALL_COMMAND, when: VIEW_WHEN, group: "navigation@3" },
+      { command: CONFIGURE_KEYBINDINGS_COMMAND, when: VIEW_WHEN, group: "navigation@4" },
     ]);
 
     const itemMenu = menu("view/item/context");
@@ -198,6 +212,29 @@ describe("Selection Clipboard manifest", () => {
       [MOVE_UP_COMMAND, "3_order@1"],
       [MOVE_DOWN_COMMAND, "3_order@2"],
       [REMOVE_ITEM_COMMAND, "4_remove@1"],
+    ]);
+  });
+
+  it("contributes default keybindings scoped to the editor or the focused list", () => {
+    // Global actions share the rarely bound Ctrl+Shift+Alt (macOS ⌃⌥⇧) family; list
+    // actions reuse Explorer conventions but only fire while this list has focus.
+    // Clear List is destructive, so it has no default binding.
+    expect(
+      manifest.contributes.keybindings.map(({ command, key, mac, when }) => [
+        command,
+        key,
+        mac ?? key,
+        when,
+      ]),
+    ).toEqual([
+      [COPY_LOCATION_COMMAND, "ctrl+shift+alt+c", "ctrl+shift+alt+c", EDITOR_KEY_WHEN],
+      [ADD_SELECTION_COMMAND, "ctrl+shift+alt+a", "ctrl+shift+alt+a", EDITOR_OR_VIEW_KEY_WHEN],
+      [COPY_ALL_COMMAND, "ctrl+shift+alt+e", "ctrl+shift+alt+e", EDITOR_OR_VIEW_KEY_WHEN],
+      [COPY_ITEM_COMMAND, "ctrl+c", "cmd+c", LIST_KEY_WHEN],
+      [EDIT_NOTE_COMMAND, "f2", "f2", LIST_KEY_WHEN],
+      [MOVE_UP_COMMAND, "alt+up", "alt+up", LIST_KEY_WHEN],
+      [MOVE_DOWN_COMMAND, "alt+down", "alt+down", LIST_KEY_WHEN],
+      [REMOVE_ITEM_COMMAND, "delete", "cmd+backspace", LIST_KEY_WHEN],
     ]);
   });
 

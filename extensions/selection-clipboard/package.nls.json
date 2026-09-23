@@ -2,6 +2,7 @@
   "command.addSelection.title": "Add Selection to List",
   "command.category": "Selection Clipboard",
   "command.clearAll.title": "Clear List",
+  "command.configureKeybindings.title": "Configure Keyboard Shortcuts",
   "command.copyAll.title": "Copy All Locations",
   "command.copyItem.title": "Copy Location",
   "command.copyLocation.title": "Copy Selection Location",

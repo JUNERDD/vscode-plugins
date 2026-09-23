@@ -25,7 +25,7 @@ Approval: Approved 2026-09-23 for T0.1–T3.5 (user: "执行计划"); T4.1 not s
 - [x] 列表形态与持久化范围？→ **原生 TreeView + 按工作区保存**（`workspaceState`）。
 - [x] 文件被编辑后的位置处理？→ **快照，不跟随**。跳转时若超出文件范围，裁剪到文件末尾。
 - [x] 新插件还是并入 git-toolkit？→ 用户明确要求「新增一个插件」，所以做成独立扩展，并用 ADR 0004 记录这次从单产品回到多扩展 workspace 的变化。
-- [ ] （非阻塞，实现时按默认值走）默认快捷键：默认**不**绑定，避免和用户已有键位冲突；README 里说明如何自绑。
+- [x] （非阻塞，实现时按默认值走）默认快捷键：最初默认**不**绑定；2026-09-23 按用户要求改为提供默认快捷键和“配置快捷键”标题栏按钮，见 Execution Record。
 - [ ] （非阻塞，需单独确认）`release.yml` 是否在本次同时支持 `selection-clipboard-v*` tag 发布。默认**不**包含在本次选中的任务里，见 Phase 4。
 
 ## File And Code References
@@ -306,3 +306,24 @@ flowchart LR
   - With `includeCode`, copying an item whose snapshot was truncated at 20,000 characters gives no marker in the clipboard text. The tooltip does show it.
   - `replaceSelection` can create a duplicate uri+range item.
 - 2026-09-23 follow-up (user request): the editor right-click entries moved into a submenu, `selectionClipboard.editorContext` (label 选区剪贴板 / Selection Clipboard), containing copyLocation `1_copy@1` and addSelection `2_collect@1`. The submenu itself sits in the `9_cutcopypaste@100` group. The product name moved from the command titles into `category: %command.category%`, so the Command Palette still shows "选区剪贴板: …" while submenu items stay short. `pnpm check` and `verify:vsix` pass.
+- 2026-09-23 follow-up (user request: keybindings, configurable from the list title bar):
+  - Added `contributes.keybindings`, all rebindable:
+    - editor (`editorTextFocus`): copyLocation `Ctrl/Cmd+Alt+C`;
+    - editor or list focused: addSelection `Ctrl/Cmd+Alt+A` and copyAll `Ctrl/Cmd+Alt+Shift+C`;
+    - list focused (`focusedView == selectionClipboard.items && listFocus && !inputFocus`): copyItem `Ctrl/Cmd+C`, editNote `F2`, moveUp/moveDown `Alt+Up/Down`, removeItem `Delete`/`Cmd+Backspace`, clearAll `Ctrl+Shift+Delete`/`Cmd+Shift+Backspace`.
+  - New command `configureKeybindings` (`$(keyboard)`, view/title `navigation@4`, also in the Command Palette). It runs `workbench.action.openGlobalKeybindings` with `@ext:vscode-plugins.selection-clipboard`.
+  - Single-item commands (openItem, editNote, updateRange, moveUp/moveDown) now fall back to the tree selection when it holds exactly one item. This makes them work from keybindings.
+  - Tradeoff: while the list is focused, `Ctrl/Cmd+Alt+Shift+C` shadows the built-in copyRelativeFilePath (whose `when` is `!editorFocus`). There is no conflict in the editor.
+- 2026-09-23 follow-up (user request: the defaults conflict too easily): audited candidates against VS Code defaults (macOS/Windows/Linux, codebling/vs-code-default-keybindings), the Cursor workbench bundle, and the extensions installed locally in Cursor/VS Code plus the user's `keybindings.json`.
+  - Conflicts found:
+    - `Cmd+Alt+C`: find-widget toggleFindCaseSensitive (`editorFocus`) and the IntelliJ keymap's codeAction.
+    - `Cmd+Alt+A`: a Cursor core workspace command.
+    - `Ctrl+Alt+A`: tailwind-fold (global) and the QQ/WeChat screenshot hotkey. Ctrl+Alt is also AltGr on Windows/Linux.
+    - `Cmd+Alt+Shift+C`: shadowed copyRelativeFilePath.
+    - `Cmd+Shift+Backspace`: the IntelliJ keymap's navigateToLastEditLocation.
+  - New global actions (free in all audited sources):
+    - copyLocation `Ctrl+Shift+Alt+C` (macOS `⌃⌥⇧C`);
+    - addSelection `Ctrl+Shift+Alt+A` (only clashes with openAgentsWindow in accessibility mode on Windows/Linux);
+    - copyAll `Ctrl+Shift+Alt+E` (L is Copilot quick chat on Windows/Linux).
+  - clearAll lost its default because it is destructive. List-scoped bindings are unchanged.
+

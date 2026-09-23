@@ -113,6 +113,12 @@
         "title": "%command.removeItem.title%",
         "category": "%command.category%",
         "icon": "$(close)"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.configureKeybindings",
+        "title": "%command.configureKeybindings.title%",
+        "category": "%command.category%",
+        "icon": "$(keyboard)"
       }
     ],
     "submenus": [
@@ -153,6 +159,11 @@
           "command": "vscode-plugins-selection-clipboard.clearAll",
           "when": "view == selectionClipboard.items",
           "group": "navigation@3"
+        },
+        {
+          "command": "vscode-plugins-selection-clipboard.configureKeybindings",
+          "when": "view == selectionClipboard.items",
+          "group": "navigation@4"
         }
       ],
       "view/item/context": [
@@ -233,6 +244,50 @@
         }
       ]
     },
+    "keybindings": [
+      {
+        "command": "vscode-plugins-selection-clipboard.copyLocation",
+        "key": "ctrl+shift+alt+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.addSelection",
+        "key": "ctrl+shift+alt+a",
+        "when": "editorTextFocus || focusedView == selectionClipboard.items"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.copyAll",
+        "key": "ctrl+shift+alt+e",
+        "when": "editorTextFocus || focusedView == selectionClipboard.items"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.copyItem",
+        "key": "ctrl+c",
+        "mac": "cmd+c",
+        "when": "focusedView == selectionClipboard.items && listFocus && !inputFocus"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.editNote",
+        "key": "f2",
+        "when": "focusedView == selectionClipboard.items && listFocus && !inputFocus"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.moveUp",
+        "key": "alt+up",
+        "when": "focusedView == selectionClipboard.items && listFocus && !inputFocus"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.moveDown",
+        "key": "alt+down",
+        "when": "focusedView == selectionClipboard.items && listFocus && !inputFocus"
+      },
+      {
+        "command": "vscode-plugins-selection-clipboard.removeItem",
+        "key": "delete",
+        "mac": "cmd+backspace",
+        "when": "focusedView == selectionClipboard.items && listFocus && !inputFocus"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -298,6 +353,7 @@
   "activationEvents": [
     "onCommand:vscode-plugins-selection-clipboard.addSelection",
     "onCommand:vscode-plugins-selection-clipboard.clearAll",
+    "onCommand:vscode-plugins-selection-clipboard.configureKeybindings",
     "onCommand:vscode-plugins-selection-clipboard.copyAll",
     "onCommand:vscode-plugins-selection-clipboard.copyItem",
     "onCommand:vscode-plugins-selection-clipboard.copyLocation",

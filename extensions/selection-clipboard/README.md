@@ -32,18 +32,20 @@ The list is saved per workspace, so it survives reloads but is not shared betwee
 
 ## Commands
 
-| Command                                      | Where                                               |
-| -------------------------------------------- | --------------------------------------------------- |
-| Selection Clipboard: Copy Selection Location | Editor context submenu, Command Palette             |
-| Selection Clipboard: Add Selection to List   | Editor context submenu, view title, Command Palette |
-| Selection Clipboard: Copy All Locations      | View title, Command Palette                         |
-| Selection Clipboard: Clear List              | View title, Command Palette                         |
-| Go to Selection                              | Clicking an entry                                   |
-| Copy Location / Edit Note / Remove           | Entry inline buttons and context menu               |
-| Replace with Current Selection               | Entry context menu                                  |
-| Move Up / Move Down                          | Entry context menu                                  |
+| Command                                           | Where                                               |
+| ------------------------------------------------- | --------------------------------------------------- |
+| Selection Clipboard: Copy Selection Location      | Editor context submenu, Command Palette             |
+| Selection Clipboard: Add Selection to List        | Editor context submenu, view title, Command Palette |
+| Selection Clipboard: Copy All Locations           | View title, Command Palette                         |
+| Selection Clipboard: Clear List                   | View title, Command Palette                         |
+| Go to Selection                                   | Clicking an entry                                   |
+| Copy Location / Edit Note / Remove                | Entry inline buttons and context menu               |
+| Replace with Current Selection                    | Entry context menu                                  |
+| Move Up / Move Down                               | Entry context menu                                  |
+| Selection Clipboard: Configure Keyboard Shortcuts | View title, Command Palette                         |
 
 Entry commands are hidden from the Command Palette because they act on a specific list entry.
+Their keyboard shortcuts act on the entries selected in the focused list.
 In the Command Palette, every command is shown with the **Selection Clipboard** category.
 
 ## Settings
@@ -91,27 +93,28 @@ Selection** clamps the range to the end of the file.
 
 ## Keyboard shortcuts
 
-Selection Clipboard does not contribute default keybindings. To add your own, run **Preferences:
-Open Keyboard Shortcuts (JSON)** and add entries like these:
+Default shortcuts (macOS in parentheses):
 
-```json
-[
-  {
-    "key": "ctrl+alt+c",
-    "mac": "cmd+alt+c",
-    "command": "vscode-plugins-selection-clipboard.copyLocation",
-    "when": "editorTextFocus && editorHasSelection"
-  },
-  {
-    "key": "ctrl+alt+a",
-    "mac": "cmd+alt+a",
-    "command": "vscode-plugins-selection-clipboard.addSelection",
-    "when": "editorTextFocus && editorHasSelection"
-  }
-]
-```
+| Shortcut                            | Command                          | Active when                      |
+| ----------------------------------- | -------------------------------- | -------------------------------- |
+| `Ctrl+Shift+Alt+C` (`⌃⌥⇧C`)         | Copy Selection Location          | Editor focused                   |
+| `Ctrl+Shift+Alt+A` (`⌃⌥⇧A`)         | Add Selection to List            | Editor or list focused           |
+| `Ctrl+Shift+Alt+E` (`⌃⌥⇧E`)         | Copy All Locations               | Editor or list focused           |
+| `Ctrl+C` (`⌘C`)                     | Copy Location (selected entries) | List focused                     |
+| `F2`                                | Edit Note                        | List focused, one entry selected |
+| `Alt+Up` / `Alt+Down` (`⌥↑` / `⌥↓`) | Move Up / Move Down              | List focused, one entry selected |
+| `Delete` (`⌘⌫`)                     | Remove (selected entries)        | List focused                     |
 
-Remove `editorHasSelection` if you also want to copy or add the bare cursor position.
+The global actions use the Ctrl+Shift+Alt family (on macOS, Control+Option+Shift, not Command)
+because VS Code and common extensions rarely bind it. The list actions follow Explorer conventions
+and only fire while the Selection Clipboard list has focus; there, `Alt+Up` / `Alt+Down` replace the
+generic list "focus without selecting" navigation. **Clear List** and **Replace with Current
+Selection** have no default shortcut.
+
+Hovering a view title button shows its shortcut. To change or add shortcuts, click the keyboard
+button in the list's view title (**Configure Keyboard Shortcuts**). It opens the Keyboard Shortcuts
+editor filtered to this extension, where every command can be rebound. On keyboard layouts where
+Ctrl+Alt acts as AltGr, rebind the global actions if they clash with character input.
 
 ## Install from VSIX
 
@@ -128,4 +131,5 @@ Build the package with `pnpm --dir extensions/selection-clipboard package:vsix`,
 - 列表按工作区保存。条目是添加时的快照，之后编辑文件不会移动它的位置；跳转时如果文件变短，会裁剪到文件末尾。
 - 行号和列号从 1 开始。列号按 UTF-16 字符偏移计算，tab 算一个字符，因此可能与状态栏的 `Col` 不同。
 - 通过 `selectionClipboard.locationStyle`、`selectionClipboard.pathStyle`、`selectionClipboard.includeCode` 调整输出格式。
-- 扩展不提供默认快捷键，可参考上面的 `keybindings.json` 示例自行绑定。
+- 默认快捷键：编辑器中 `Ctrl+Shift+Alt+C`（macOS `⌃⌥⇧C`）复制选区位置、`Ctrl+Shift+Alt+A`（`⌃⌥⇧A`）添加选区、`Ctrl+Shift+Alt+E`（`⌃⌥⇧E`）复制全部位置；列表聚焦时 `Ctrl+C`（`⌘C`）复制所选条目、`F2` 编辑备注、`Alt+↑/↓` 上下移动、`Delete`（`⌘⌫`）删除。清空列表没有默认快捷键。
+- 点击列表标题栏的键盘按钮（**配置快捷键**）会打开已筛选到本扩展的键盘快捷方式编辑器，所有命令都可以在那里改绑或新增快捷键。

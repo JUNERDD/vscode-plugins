@@ -2,6 +2,7 @@
   "command.addSelection.title": "添加选区到列表",
   "command.category": "选区剪贴板",
   "command.clearAll.title": "清空列表",
+  "command.configureKeybindings.title": "配置快捷键",
   "command.copyAll.title": "复制全部位置",
   "command.copyItem.title": "复制位置",
   "command.copyLocation.title": "复制选区位置",

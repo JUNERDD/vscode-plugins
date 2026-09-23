@@ -6,10 +6,12 @@ import { formatEntries, formatLocation, type FormattableEntry } from "./location
 import {
   ADD_SELECTION_COMMAND,
   CLEAR_ALL_COMMAND,
+  CONFIGURE_KEYBINDINGS_COMMAND,
   COPY_ALL_COMMAND,
   COPY_ITEM_COMMAND,
   COPY_LOCATION_COMMAND,
   EDIT_NOTE_COMMAND,
+  EXTENSION_ID,
   MOVE_DOWN_COMMAND,
   MOVE_UP_COMMAND,
   OPEN_ITEM_COMMAND,
@@ -32,6 +34,9 @@ export interface CommandDependencies {
 
 const STATUS_MESSAGE_TIMEOUT_MS = 3000;
 
+/** Built-in command that opens the Keyboard Shortcuts editor; its argument prefills the search box. */
+const OPEN_KEYBINDINGS_COMMAND = "workbench.action.openGlobalKeybindings";
+
 /**
  * Builds one handler per contributed command. The record type forces every
  * command in {@link ALL_COMMANDS} to have a handler. Handlers never reject:
@@ -39,7 +44,8 @@ const STATUS_MESSAGE_TIMEOUT_MS = 3000;
  *
  * Tree commands receive `(clickedItem, selectedItems?)` from VS Code. Those
  * objects may be stale renders, so they are resolved by id against the store
- * and unknown ids are ignored.
+ * and unknown ids are ignored. Keybindings pass no arguments, so tree commands
+ * then act on the tree selection.
  */
 export function createCommandHandlers(
   deps: CommandDependencies,
@@ -51,17 +57,18 @@ export function createCommandHandlers(
     [ADD_SELECTION_COMMAND]: guarded(() => addSelection(store)),
     [COPY_ALL_COMMAND]: guarded(() => copyAll(store)),
     [CLEAR_ALL_COMMAND]: guarded(() => clearAll(store)),
-    [OPEN_ITEM_COMMAND]: guarded((item) => openItem(resolveItem(store, item))),
+    [OPEN_ITEM_COMMAND]: guarded((item) => openItem(resolveItem(deps, item))),
     [COPY_ITEM_COMMAND]: guarded((item, selected) =>
       copyItems(resolveTargets(deps, item, selected)),
     ),
-    [EDIT_NOTE_COMMAND]: guarded((item) => editNote(store, resolveItem(store, item))),
-    [UPDATE_RANGE_COMMAND]: guarded((item) => updateRange(store, resolveItem(store, item))),
-    [MOVE_UP_COMMAND]: guarded((item) => move(store, resolveItem(store, item), -1)),
-    [MOVE_DOWN_COMMAND]: guarded((item) => move(store, resolveItem(store, item), 1)),
+    [EDIT_NOTE_COMMAND]: guarded((item) => editNote(store, resolveItem(deps, item))),
+    [UPDATE_RANGE_COMMAND]: guarded((item) => updateRange(store, resolveItem(deps, item))),
+    [MOVE_UP_COMMAND]: guarded((item) => move(store, resolveItem(deps, item), -1)),
+    [MOVE_DOWN_COMMAND]: guarded((item) => move(store, resolveItem(deps, item), 1)),
     [REMOVE_ITEM_COMMAND]: guarded((item, selected) =>
       removeItems(store, resolveTargets(deps, item, selected)),
     ),
+    [CONFIGURE_KEYBINDINGS_COMMAND]: guarded(() => configureKeybindings()),
   };
 }
 
@@ -227,6 +234,11 @@ async function openItem(item: SelectionItem | undefined): Promise<void> {
   }
 }
 
+/** Opens the Keyboard Shortcuts editor filtered to this extension's commands. */
+async function configureKeybindings(): Promise<void> {
+  await vscode.commands.executeCommand(OPEN_KEYBINDINGS_COMMAND, `@ext:${EXTENSION_ID}`);
+}
+
 async function writeLocations(text: string, count: number): Promise<void> {
   await vscode.env.clipboard.writeText(text);
   vscode.window.setStatusBarMessage(
@@ -258,9 +270,19 @@ function idOf(value: unknown): string | undefined {
   return undefined;
 }
 
-function resolveItem(store: SelectionStore, value: unknown): SelectionItem | undefined {
-  const id = idOf(value);
-  return id === undefined ? undefined : store.get(id);
+/**
+ * Target of a single-item command: the clicked item, else the tree selection
+ * when it holds exactly one item (a keybinding gives no arguments, and acting
+ * on an arbitrary member of a multi-selection would be surprising).
+ */
+function resolveItem(deps: CommandDependencies, value: unknown): SelectionItem | undefined {
+  let target = value;
+  if (target === undefined) {
+    const selection = deps.treeSelection();
+    target = selection.length === 1 ? selection[0] : undefined;
+  }
+  const id = idOf(target);
+  return id === undefined ? undefined : deps.store.get(id);
 }
 
 /**

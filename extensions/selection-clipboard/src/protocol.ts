@@ -12,6 +12,7 @@ export const UPDATE_RANGE_COMMAND = `${COMMAND_PREFIX}.updateRange`;
 export const MOVE_UP_COMMAND = `${COMMAND_PREFIX}.moveUp`;
 export const MOVE_DOWN_COMMAND = `${COMMAND_PREFIX}.moveDown`;
 export const REMOVE_ITEM_COMMAND = `${COMMAND_PREFIX}.removeItem`;
+export const CONFIGURE_KEYBINDINGS_COMMAND = `${COMMAND_PREFIX}.configureKeybindings`;
 
 /** Every contributed command, in manifest order. */
 export const ALL_COMMANDS = [
@@ -26,7 +27,11 @@ export const ALL_COMMANDS = [
   MOVE_UP_COMMAND,
   MOVE_DOWN_COMMAND,
   REMOVE_ITEM_COMMAND,
+  CONFIGURE_KEYBINDINGS_COMMAND,
 ] as const;
+
+/** `publisher.name` from the manifest; filters the Keyboard Shortcuts editor to this extension. */
+export const EXTENSION_ID = "vscode-plugins.selection-clipboard";
 
 /** Editor context submenu that groups the selection actions under one entry. */
 export const EDITOR_CONTEXT_SUBMENU_ID = "selectionClipboard.editorContext";
