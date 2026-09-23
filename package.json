@@ -2,7 +2,7 @@
   "name": "vscode-plugins",
   "version": "0.0.0",
   "private": true,
-  "description": "Turborepo workspace for the Git Toolkit VS Code extension.",
+  "description": "Turborepo workspace for the Git Toolkit and Selection Clipboard VS Code extensions.",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
@@ -23,10 +23,13 @@
     "release:git-toolkit:major": "pnpm check && pnpm --dir extensions/git-toolkit version major --tag-version-prefix=git-toolkit-v -m \"publish(git-toolkit): release v%s\"",
     "release:git-toolkit:minor": "pnpm check && pnpm --dir extensions/git-toolkit version minor --tag-version-prefix=git-toolkit-v -m \"publish(git-toolkit): release v%s\"",
     "release:git-toolkit:patch": "pnpm check && pnpm --dir extensions/git-toolkit version patch --tag-version-prefix=git-toolkit-v -m \"publish(git-toolkit): release v%s\"",
+    "release:selection-clipboard:major": "pnpm check && pnpm --dir extensions/selection-clipboard version major --tag-version-prefix=selection-clipboard-v -m \"publish(selection-clipboard): release v%s\"",
+    "release:selection-clipboard:minor": "pnpm check && pnpm --dir extensions/selection-clipboard version minor --tag-version-prefix=selection-clipboard-v -m \"publish(selection-clipboard): release v%s\"",
+    "release:selection-clipboard:patch": "pnpm check && pnpm --dir extensions/selection-clipboard version patch --tag-version-prefix=selection-clipboard-v -m \"publish(selection-clipboard): release v%s\"",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "typecheck": "turbo run typecheck",
-    "verify:vsix": "node scripts/verify-vsix.mjs extensions/git-toolkit"
+    "verify:vsix": "node scripts/verify-vsix.mjs extensions/git-toolkit extensions/selection-clipboard"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.2",

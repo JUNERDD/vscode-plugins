@@ -1,5 +1,5 @@
 name: Feature request
-description: Propose a focused improvement to Git Toolkit or its repository workflow.
+description: Propose a focused improvement to Git Toolkit, Selection Clipboard, or the repository workflow.
 title: "[Feature]: "
 labels:
   - enhancement
@@ -12,6 +12,7 @@ body:
         - Commit browsing
         - Diff and patch preview
         - Branch file comparison
+        - Selection Clipboard
         - Build and release tooling
     validations:
       required: true
